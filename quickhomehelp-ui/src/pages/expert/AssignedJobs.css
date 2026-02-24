@@ -1,0 +1,101 @@
+/* CONTAINER */
+
+.expert-jobs-container {
+  padding: 30px;
+}
+
+/* FILTERS */
+
+/* .job-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.job-filters button {
+  padding: 8px 16px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+} */
+
+.filter-btn {
+  background: #5b5bd6;
+  color: white;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filter-btn:hover {
+  background: #4747c8;
+}
+
+/* ACTIVE TAB */
+.filter-btn.active {
+  background: #16a34a;  /* green-600 */
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+/* GRID */
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+
+.job-card {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px
+    rgba(0,0,0,0.1);
+}
+
+/* ACTIONS */
+
+.job-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.accept-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+}
+
+.reject-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+}
+
+/* OTP MODAL */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.otp-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}

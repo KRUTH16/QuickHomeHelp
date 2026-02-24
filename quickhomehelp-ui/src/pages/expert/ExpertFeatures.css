@@ -1,0 +1,201 @@
+/* ======================================================
+   EXPERT FEATURES — SERVICE PROVIDER PANEL
+   Modern Card Layout
+====================================================== */
+
+/* ===== MAIN CONTAINER ===== */
+
+.expert-features-container {
+  background: #ffffff;
+  padding: 28px 26px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px
+    rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+
+/* ===== TITLE ===== */
+
+.expert-features-container h3 {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+
+/* ======================================================
+   ONLINE TOGGLE CARD
+====================================================== */
+
+.online-toggle {
+  background: linear-gradient(
+    135deg,
+    #f8fafc,
+    #eef2f7
+  );
+  padding: 18px 20px;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0
+      rgba(255,255,255,0.6),
+    0 4px 14px
+      rgba(0,0,0,0.05);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+
+/* STATUS TEXT */
+
+.online-toggle p {
+  font-size: 15px;
+  margin: 0;
+}
+
+
+/* STATUS COLORS */
+
+.status-online {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.status-offline {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+
+/* ======================================================
+   TOGGLE BUTTONS
+====================================================== */
+
+.toggle-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: 0.25s;
+}
+
+
+/* ONLINE BUTTON */
+
+.btn-online {
+  background: linear-gradient(
+    135deg,
+    #22c55e,
+    #16a34a
+  );
+}
+
+.btn-online:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px
+    rgba(34,197,94,0.4);
+}
+
+
+/* OFFLINE BUTTON */
+
+.btn-offline {
+  background: linear-gradient(
+    135deg,
+    #ef4444,
+    #dc2626
+  );
+}
+
+.btn-offline:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px
+    rgba(239,68,68,0.4);
+}
+
+
+/* DISABLED */
+
+.toggle-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+/* ======================================================
+   ACTION BUTTON GRID
+====================================================== */
+
+.expert-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+
+/* ACTION BUTTON STYLE */
+
+.expert-actions button {
+  padding: 14px 12px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #4f46e5
+  );
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 6px 16px
+    rgba(79,70,229,0.25);
+}
+
+
+/* HOVER */
+
+.expert-actions button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px
+    rgba(79,70,229,0.35);
+}
+
+
+/* ACTIVE CLICK */
+
+.expert-actions button:active {
+  transform: scale(0.97);
+}
+
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 768px) {
+
+  .online-toggle {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .toggle-btn {
+    margin-left: 0;
+    margin-right: 10px;
+  }
+
+}

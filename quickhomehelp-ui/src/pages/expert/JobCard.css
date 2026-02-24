@@ -1,0 +1,254 @@
+/* =========================================
+   COMPLETED CONTAINER
+========================================= */
+
+.completed-container {
+  margin-top: 20px;
+  padding: 18px;
+  background: #f1f5f9;
+  border: 1px solid #dbe3f0;
+  border-radius: 14px;
+}
+
+
+/* =========================================
+   COMPLETED BADGE
+========================================= */
+
+.completed-badge {
+  display: inline-block;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+
+/* =========================================
+   BOTTOM FLEX ROW
+========================================= */
+
+.completed-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+
+/* =========================================
+   LEFT SIDE (PAYMENT)
+========================================= */
+
+.payment-side {
+  flex: 1;
+}
+
+
+/* =========================================
+   RIGHT SIDE (RATING)
+========================================= */
+
+.rating-side {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+/* =========================================
+   PAID LABEL
+========================================= */
+
+.paid-label {
+  font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+}
+
+.review-toggle-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #4a90e2;
+  color: white;
+  cursor: pointer;
+}
+
+.review-card {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f4f7fb;
+  border-radius: 8px;
+}
+
+.no-review {
+  margin-top: 8px;
+  color: gray;
+}
+
+/* ============================= */
+/* PROGRESS SECTION CONTAINER */
+/* ============================= */
+
+.progress-section {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8fafc, #eef2f7);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+/* ============================= */
+/* TIMER TEXT */
+/* ============================= */
+
+.timer-text {
+  font-size: 16px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.timer-text b {
+  margin-left: 6px;
+  font-size: 18px;
+  color: #ef4444;
+}
+
+/* ============================= */
+/* BUTTON BASE STYLE */
+/* ============================= */
+
+.progress-section button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* ============================= */
+/* START BUTTON */
+/* ============================= */
+
+.start-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
+}
+
+/* ============================= */
+/* PAUSE BUTTON */
+/* ============================= */
+
+.pause-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.pause-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(217, 119, 6, 0.4);
+}
+
+/* ============================= */
+/* RESUME BUTTON */
+/* ============================= */
+
+.resume-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+
+.resume-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(22, 163, 74, 0.4);
+}
+
+/* ============================= */
+/* END JOB BUTTON */
+/* ============================= */
+
+.end-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.end-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(220, 38, 38, 0.4);
+}
+
+/* ============================= */
+/* TIMER ACTIONS WRAPPER */
+/* ============================= */
+
+.timer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ============================= */
+/* VERIFY OTP BUTTON */
+/* ============================= */
+
+.otp-btn {
+  margin-top: 14px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white;
+  transition: all 0.25s ease;
+}
+
+/* Hover Effect */
+.otp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.4);
+}
+
+/* Active Click Effect */
+.otp-btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 600px) {
+  .progress-section {
+    padding: 16px;
+  }
+
+  .progress-section button {
+    width: 100%;
+  }
+
+  .timer-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+

@@ -1,0 +1,28 @@
+.duration-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.duration-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+/* Hover */
+.duration-btn:hover {
+  background: #f3f4f6;
+}
+
+/* Active / Selected */
+.duration-btn.active {
+  background: #2563eb;
+  color: white;
+  border: 1px solid #2563eb;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}

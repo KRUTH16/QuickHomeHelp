@@ -1,0 +1,78 @@
+/* ===== PAYMENT BOX ===== */
+
+.payment-box {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 220px;
+}
+
+/* Title */
+.payment-box h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+  font-weight: 600;
+}
+
+/* Payment Method Buttons */
+.payment-box button {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Cash Button */
+.payment-box button:nth-child(2) {
+  background-color: #f3f4f6;
+}
+
+.payment-box button:nth-child(2):hover {
+  background-color: #e5e7eb;
+}
+
+/* UPI Button */
+.payment-box button:nth-child(3) {
+  background-color: #eef2ff;
+}
+
+.payment-box button:nth-child(3):hover {
+  background-color: #dbeafe;
+}
+
+/* QR Section */
+.qr-box {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.qr-box img {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.qr-box p {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #555;
+}
+
+/* Confirm Button */
+.confirm-btn {
+  background-color: #16a34a !important;
+  color: white;
+  font-weight: 500;
+}
+
+.confirm-btn:hover {
+  background-color: #15803d !important;
+}

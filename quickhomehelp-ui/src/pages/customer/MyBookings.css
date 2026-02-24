@@ -1,0 +1,227 @@
+    /* ===== PAGE ===== */
+
+.bookings-container {
+
+  padding: 20px;
+}
+
+.bookings-container h2 {
+
+  margin-bottom: 20px;
+}
+
+
+/* ===== GRID ===== */
+
+.bookings-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(280px, 1fr));
+
+  gap: 20px;
+}
+
+
+/* ===== CARD ===== */
+
+.booking-card {
+
+  background: #ffffff;
+
+  padding: 18px;
+
+  border-radius: 12px;
+
+  box-shadow: 0 6px 18px
+    rgba(0,0,0,0.08);
+}
+
+
+/* ===== STATUS ===== */
+
+.status {
+
+  padding: 4px 10px;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.status.requested {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.assigned {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status.accepted {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.started {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.status.completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+
+/* ===== OTP BOX ===== */
+
+.otp-box {
+
+  margin-top: 15px;
+
+  padding: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #22c55e,
+    #16a34a
+  );
+
+  color: white;
+
+  border-radius: 10px;
+
+  text-align: center;
+}
+
+.otp-box h1 {
+
+  margin: 5px 0;
+
+  font-size: 28px;
+}
+
+
+/* ===== PAYMENT BOX ===== */
+
+.payment-box {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fafafa;
+  text-align: center;
+}
+
+/* Completed Label */
+
+.completed-label {
+  font-weight: 600;
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+
+/* Pay Button */
+
+.pay-btn {
+  padding: 8px 16px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.pay-btn:hover {
+  background: #125aa0;
+}
+
+/* Disabled After Payment */
+
+.pay-btn:disabled {
+  background: #9e9e9e;
+  cursor: not-allowed;
+}
+
+/* Paid Status Badge */
+
+.paid-badge {
+  margin-top: 8px;
+  margin-left: 10px;
+  display: inline-block;
+  padding: 4px 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+/* ===== RATING SECTION ===== */
+
+.rating-box {
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rating-box p {
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+/* Dropdown */
+.rating-box select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Textarea */
+.rating-box textarea {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: none;
+  height: 70px;
+  outline: none;
+}
+
+/* Focus effect */
+.rating-box select:focus,
+.rating-box textarea:focus {
+  border-color: #007bff;
+}
+
+/* Submit button */
+.rating-box button {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.rating-box button:hover {
+  background-color: #0056b3;
+}

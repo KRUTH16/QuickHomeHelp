@@ -1,0 +1,12 @@
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 35px;
+  background: white;
+  color: black;
+  width: 260px;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  z-index: 9999;
+}

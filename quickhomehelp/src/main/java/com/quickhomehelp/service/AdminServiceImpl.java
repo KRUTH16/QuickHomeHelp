@@ -1,0 +1,106 @@
+package com.quickhomehelp.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.quickhomehelp.entity.Booking;
+import com.quickhomehelp.entity.ExpertProfile;
+import com.quickhomehelp.entity.HomeService;
+import com.quickhomehelp.repository.BookingRepository;
+import com.quickhomehelp.repository.ExpertProfileRepository;
+import com.quickhomehelp.repository.ServiceRepository;
+
+@org.springframework.stereotype.Service
+public class AdminServiceImpl implements AdminService {
+
+    @Autowired
+    private ExpertProfileRepository expertRepo;
+
+    @Autowired
+    private ServiceRepository serviceRepo;
+
+    @Autowired
+    private BookingRepository bookingRepo;
+
+    @Override
+    public String verifyExpert(Long expertProfileId) {
+
+        ExpertProfile expert = expertRepo
+            .findById(expertProfileId)
+            .orElseThrow(() ->
+                new RuntimeException("Expert not found"));
+
+        expert.setVerified(true);
+        expert.setRejected(false); 
+
+        expertRepo.save(expert);
+
+        return "Expert verified successfully";
+    }
+    
+    @Override
+    public String rejectExpert(Long expertProfileId) {
+
+        ExpertProfile expert =
+            expertRepo.findById(expertProfileId)
+            .orElseThrow(() ->
+                new RuntimeException("Expert not found"));
+
+        expert.setVerified(false);
+        expert.setRejected(true);   
+
+        expertRepo.save(expert);
+
+        return "Expert rejected successfully";
+    }
+
+
+    @Override
+    public HomeService addService(HomeService service) {
+
+        return serviceRepo.save(service);
+    }
+
+
+    
+    @Override
+    public List<ExpertProfile> getAllExperts() {
+
+        return expertRepo.findAll();
+    }
+    
+    @Override
+    public List<HomeService> getAllServices() {
+        return serviceRepo.findAll();
+    }
+
+    @Override
+    public HomeService updateService(Long id, HomeService updatedService) {
+
+        HomeService service = serviceRepo.findById(id)
+                .orElseThrow(() ->
+                    new RuntimeException("Service not found"));
+
+        service.setName(updatedService.getName());
+        service.setCategory(updatedService.getCategory());
+        service.setBaseDuration(updatedService.getBaseDuration());
+        service.setBasePrice(updatedService.getBasePrice());
+
+        return serviceRepo.save(service);
+    }
+
+    @Override
+    public String deleteService(Long id) {
+
+        if (!serviceRepo.existsById(id)) {
+            throw new RuntimeException("Service not found");
+        }
+
+        serviceRepo.deleteById(id);
+
+        return "Service deleted successfully";
+    }
+  
+  
+}

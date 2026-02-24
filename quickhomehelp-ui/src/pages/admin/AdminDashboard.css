@@ -1,0 +1,99 @@
+/* PAGE CONTAINER */
+.admin-container {
+  height: 100vh;
+  background-color: #f4f6f8;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔝 TOP BAR */
+.admin-topbar {
+  height: 60px;
+  background-color: #111;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+}
+
+/* ADMIN NAME */
+.admin-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.logout-btn:hover {
+  background-color: darkred;
+}
+
+/* MAIN BODY */
+.admin-body {
+  flex: 1;
+   
+  padding: 40px;
+  text-align: center;
+}
+
+/* WELCOME TEXT */
+.welcome-text {
+  font-size: 32px;
+  margin-bottom: 60px;
+}
+
+/* BOX CONTAINER */
+.admin-box-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* DASHBOARD BOX */
+.admin-box {
+  width: 220px;
+  height: 130px;
+  background-color: white;
+  border: 2px solid #111;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* HOVER EFFECT */
+.admin-box:hover {
+  background-color: #111;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* BACK BUTTON */
+.back-btn {
+  margin-bottom: 20px;
+  padding: 6px 14px;
+  border: none;
+  background-color: #111;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background-color: #333;
+}

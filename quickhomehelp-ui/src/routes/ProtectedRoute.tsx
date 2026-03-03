@@ -11,7 +11,7 @@ export default function ProtectedRoute({
   allowedRoles
 }: ProtectedRouteProps) {
 
-  const role = localStorage.getItem("role");
+  const role = sessionStorage.getItem("role");
 
   if (!role) {
     return <Navigate to="/login" />;

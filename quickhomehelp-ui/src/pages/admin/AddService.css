@@ -122,7 +122,6 @@
 }
 
 
-/* ===== DISABLED BUTTON ===== */
 
 .add-service-btn:disabled {
   background: #9ca3af;
@@ -131,7 +130,6 @@
 }
 
 
-/* ===== RESPONSIVE ===== */
 
 @media (max-width: 480px) {
 

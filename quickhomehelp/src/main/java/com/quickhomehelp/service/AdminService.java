@@ -1,3 +1,4 @@
+
 package com.quickhomehelp.service;
 
 import com.quickhomehelp.entity.Booking;
@@ -21,9 +22,9 @@ public interface AdminService {
 	HomeService updateService(Long id, HomeService updatedService);
 
 	String deleteService(Long id);
-    
-    
-    
+	
+	String markTrainingDone(Long id);
+   
 
 }
 

@@ -1,7 +1,9 @@
+
 import "./Login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import axios from "axios";  
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,29 +16,41 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const login = async () => {
-    setError(""); // clear previous error
+    setError("");
+
+    if (!form.email || !form.password) {
+      setError("Please enter email and password");
+      return;
+    }
 
     try {
       const res = await api.post("/auth/login", form);
 
       const { userId, role } = res.data;
 
-      localStorage.setItem("userId", userId);
+      sessionStorage.setItem("userId", userId.toString());
+      sessionStorage.setItem("role", role);
 
-      localStorage.setItem("role", role);
+      if (role === "ADMIN") {
+        navigate("/admin");
+      } else if (role === "EXPERT") {
+        navigate("/expert");
+      } else if (role === "CUSTOMER") {
+        navigate("/customer");
+      }
 
-      if (role === "ADMIN") navigate("/admin");
+    } catch (err: unknown) {
 
-      if (role === "EXPERT") navigate("/expert");
+      if (axios.isAxiosError(err)) {
 
-      if (role === "CUSTOMER") navigate("/customer");
-    } 
-    catch (err: any) {
-      
-      if (err.response?.status === 401) {
-        setError("Invalid email or password");
+        if (err.response?.status === 401) {
+          setError("Invalid email or password");
+        } else {
+          setError("Login failed. Please try again.");
+        }
+
       } else {
-        setError("Login failed. Please try again.");
+        setError("Something went wrong.");
       }
     }
   };
@@ -45,17 +59,14 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <h1 className="brand-title">QuickHomeHelp</h1>
-
         <h2 className="login-title">Welcome back</h2>
 
-        <input
+        <input type="email"
           className="login-input"
           placeholder="Email"
+          value={form.email}
           onChange={(e) =>
-            setForm({
-              ...form,
-              email: e.target.value,
-            })
+            setForm({ ...form, email: e.target.value })
           }
         />
 
@@ -63,11 +74,9 @@ export default function Login() {
           type="password"
           className="login-input"
           placeholder="Password"
+          value={form.password}
           onChange={(e) =>
-            setForm({
-              ...form,
-              password: e.target.value,
-            })
+            setForm({ ...form, password: e.target.value })
           }
         />
 
@@ -79,7 +88,10 @@ export default function Login() {
 
         <p className="register-text">
           New user?{" "}
-          <span className="register-link" onClick={() => navigate("/register")}>
+          <span
+            className="register-link"
+            onClick={() => navigate("/register")}
+          >
             Register here
           </span>
         </p>

@@ -27,7 +27,7 @@ export default function MyBookings() {
     useState<string>("");
 
   const userId =
-    localStorage.getItem("userId");
+    sessionStorage.getItem("userId");
 
   useEffect(() => {
 
@@ -96,7 +96,7 @@ export default function MyBookings() {
           >
 
             <p>
-              <b>Booking ID:</b> {b.id}
+              <b>Your Booking Details is:</b> 
             </p>
 
             <p>

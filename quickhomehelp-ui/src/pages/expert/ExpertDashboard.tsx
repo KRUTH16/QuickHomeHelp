@@ -20,6 +20,7 @@ interface User {
 }
 
 interface ExpertProfileType {
+  id:number;
   user: User;
   services: Service[];
   pincode: string;
@@ -35,7 +36,7 @@ export default function ExpertDashboard() {
     useState<ExpertProfileType | null>(null);
 
   const userId: string | null =
-    localStorage.getItem("userId");
+    sessionStorage.getItem("userId");
 
   const fetchProfile = async () => {
 
@@ -64,7 +65,7 @@ export default function ExpertDashboard() {
     );
 
   const logout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/";
   };
 

@@ -48,24 +48,18 @@ public class CustomerServiceImpl implements CustomerService {
         return serviceRepo.findAll();
     }
 
-
-    
     @Override
-    public Booking createBooking(BookingRequest request,Long userId) {
+    public Booking createBooking(BookingRequest request, Long userId) {
 
         HomeService service = serviceRepo
                 .findById(request.getServiceId())
                 .orElseThrow(() ->
                     new RuntimeException("Service not found"));
-        
 
         User customer = userRepo
-            .findById(userId)
-            .orElseThrow(() ->
-                new RuntimeException(
-                    "Customer not found"
-                )
-            );
+                .findById(userId)
+                .orElseThrow(() ->
+                    new RuntimeException("Customer not found"));
 
         Booking booking = new Booking();
 
@@ -75,42 +69,28 @@ public class CustomerServiceImpl implements CustomerService {
         booking.setStatus("REQUESTED");
         booking.setAddress(request.getAddress());
         booking.setPincode(request.getPincode());
-        
-        
-        booking.setDurationMinutes(
-                request.getDurationMinutes()
-            );
 
-   
-        double duration =
-                request.getDurationMinutes();   
+        Integer baseDuration = service.getBaseDuration();
+        Double basePrice = service.getBasePrice();
 
-        double baseDuration =
-                service.getBaseDuration();
+        Double perMinuteRate = basePrice / baseDuration;
 
-        double basePrice =
-                service.getBasePrice();
+        booking.setBaseDuration(baseDuration);
+        booking.setBasePrice(basePrice);
+        booking.setPerMinuteRate(perMinuteRate);
 
-        double price =
-                (duration / baseDuration)
-                * basePrice;
-
-        booking.setAmount((double) Math.round(price));
+        booking.setAmount(basePrice);
 
         booking.setCreatedAt(LocalDateTime.now());
 
-        Booking savedBooking =
-                bookingRepo.save(booking);
-        
-        notificationService.createNotification(
-        	    customer.getId(),
-        	    "Booking confirmed. Expert will be assigned soon."
-        	);
-        
-        
+        Booking savedBooking = bookingRepo.save(booking);
 
-        return matchingService
-                .assignExpert(savedBooking);
+        notificationService.createNotification(
+                customer.getId(),
+                "Booking confirmed. Expert will be assigned soon."
+        );
+
+        return matchingService.assignExpert(savedBooking);
     }
     
     @Override

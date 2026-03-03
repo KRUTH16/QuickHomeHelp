@@ -11,6 +11,7 @@ import com.quickhomehelp.repository.BookingRepository;
 import com.quickhomehelp.repository.ExpertProfileRepository;
 import com.quickhomehelp.repository.ServiceRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,16 +119,18 @@ public class ExpertServiceImpl
         Booking savedBooking = bookingRepo.save(booking);
         
         notificationService.createNotification(
-        	    booking.getCustomerId(),
-        	    "OTP for Booking #" + booking.getId() +
-        	    " is " + booking.getOtp() +
-        	    ". Share this with the expert to start service."
-        	);
-        
-        notificationService.createNotification(
                 booking.getCustomerId(),
                 "Expert is arriving soon."
         );
+        
+        notificationService.createNotification(
+        	    booking.getCustomerId(),
+        	    "OTP is " 
+        	  + booking.getOtp() +
+        	    ". Share this with the expert to start service."
+        	);
+        
+       
 
         System.out.println(
             "OTP for Booking ID " +
@@ -199,13 +202,11 @@ public class ExpertServiceImpl
 
         expert.setPincode(request.getPincode());
         expert.setAddress(request.getAddress());
-        expert.setTrainingDone(request.getTrainingDone());
 
         return expertRepo.save(expert);
     }
-
-
-     
+    
+   
         @Override
         public ExpertProfile goOnline(
                 Long expertId,
@@ -227,10 +228,6 @@ public class ExpertServiceImpl
             return expertRepo.save(expert);
         }
         
-
-    
- 
-        
         @Override
         public ExpertProfile getProfileByUserId(
                 Long userId) {
@@ -241,12 +238,119 @@ public class ExpertServiceImpl
                     new RuntimeException(
                         "Expert profile not found"));
         }
+        
+        
+        @Override
+        public Booking startJob(Long bookingId) {
+
+            Booking booking = bookingRepo.findById(bookingId)
+                    .orElseThrow(() ->
+                        new RuntimeException("Booking not found"));
+
+            if (!booking.getStatus().equals("IN_PROGRESS")) {
+                throw new IllegalStateException(
+                        "Job must be in IN_PROGRESS state");
+            }
+
+ 
+            if (booking.getStartTime() != null) {
+                return booking;   
+            }
+
+            booking.setStartTime(LocalDateTime.now());
+
+            return bookingRepo.save(booking);
+        }
+        
+ 
+              
+        @Override
+        public Booking completeJob(Long bookingId) {
+
+            Booking booking = bookingRepo.findById(bookingId)
+                    .orElseThrow(() ->
+                        new RuntimeException("Booking not found"));
+
+            if (!booking.getStatus().equals("IN_PROGRESS")) {
+                throw new IllegalStateException(
+                        "Job is not in progress");
+            }
+
+            if (booking.getStartTime() == null) {
+                throw new IllegalStateException(
+                        "Job was never started");
+            }
+
+            booking.setEndTime(LocalDateTime.now());
+
+            long minutes = java.time.Duration
+                    .between(
+                        booking.getStartTime(),
+                        booking.getEndTime()
+                    )
+                    .toMinutes();
+
+            Integer baseDuration = booking.getBaseDuration();
+            Double basePrice = booking.getBasePrice();
+            Double perMinuteRate = booking.getPerMinuteRate();
+
+            double total;
+
+            if (minutes <= baseDuration) {
+                total = basePrice;
+            } else {
+                long extraMinutes = minutes - baseDuration;
+                total = basePrice + (extraMinutes * perMinuteRate);
+            }
+
+            booking.setAmount((double) Math.round(total));
+
+            booking.setStatus("COMPLETED");
+
+            return bookingRepo.save(booking);
+        }
+        
+        
+        
+        
+        @Override
+        public Booking pauseJob(Long bookingId) {
+
+            Booking booking = bookingRepo.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            if (!booking.getStatus().equals("IN_PROGRESS"))
+                throw new IllegalStateException("Job not running");
+
+            if (booking.getPauseTime() == null) {
+                booking.setPauseTime(LocalDateTime.now());
+            }
+
+            return bookingRepo.save(booking);
+        }
+        
+        @Override
+        public Booking resumeJob(Long bookingId) {
+
+            Booking booking = bookingRepo.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            if (booking.getPauseTime() == null)
+                return booking;
+
+            long paused = java.time.Duration
+                    .between(booking.getPauseTime(), LocalDateTime.now())
+                    .getSeconds();
+
+            booking.setPausedSeconds(
+                booking.getPausedSeconds() + paused
+            );
+
+            booking.setPauseTime(null);
+
+            return bookingRepo.save(booking);
+        }
 
 
-
-
-
-
-    
 }
 

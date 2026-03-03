@@ -17,10 +17,10 @@ export default function CustomerDashboard() {
 
   const [customer, setCustomer] = useState<Customer | null>(null);
 
-  const userId = localStorage.getItem("userId");
+  const userId = sessionStorage.getItem("userId");
 
   const logout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = "/";
   };
 

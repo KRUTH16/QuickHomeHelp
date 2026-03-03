@@ -25,47 +25,39 @@ public class PaymentServiceImpl
     @Autowired
     private NotificationService notificationService;
 
+   
     
-    @Transactional
     @Override
-    public void collectPayment(
-            Long bookingId,
-            String method) {
+    public Payment collectPayment(Long bookingId, String method) {
 
-        Booking booking =
-            bookingRepo.findById(bookingId)
-            .orElseThrow(() ->
-                new RuntimeException("Booking not found"));
+        Booking booking = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        if (!booking.getStatus()
-                .equals("COMPLETED")) {
-
-            throw new RuntimeException(
-                "Payment allowed only after completion");
+        if (!booking.getStatus().equals("COMPLETED")) {
+            throw new RuntimeException("Job not completed yet");
         }
 
+        if (booking.getPaymentStatus().equals("PAID")) {
+            throw new RuntimeException("Payment already done");
+        }
 
-        
         Payment payment = new Payment();
 
         payment.setBookingId(bookingId);
+        payment.setAmount(booking.getAmount());
         payment.setMethod(method);
         payment.setStatus("SUCCESS");
         payment.setPaidAt(LocalDateTime.now());
 
-        paymentRepo.save(payment);
+        Payment saved = paymentRepo.save(payment);
 
         booking.setPaymentStatus("PAID");
         bookingRepo.save(booking);
-        
-        notificationService.createNotification(
-                booking.getCustomerId(),
-                "Payment  successfull."
-        );
-        
-        notificationService.createNotification(
-        	    booking.getExpertId(),
-        	    "Payment collected successfully."
-        	);
+
+        return saved;
     }
+    
+    
+    
+    
 }

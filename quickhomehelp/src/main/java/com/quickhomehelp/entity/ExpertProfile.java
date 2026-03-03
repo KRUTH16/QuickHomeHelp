@@ -19,10 +19,6 @@ public class ExpertProfile {
     @JoinColumn(name = "user_id")
     private User user;
     
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
-
 
     private boolean isVerified = false;
     

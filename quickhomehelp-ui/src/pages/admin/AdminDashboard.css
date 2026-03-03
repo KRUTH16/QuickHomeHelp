@@ -7,7 +7,6 @@
   flex-direction: column;
 }
 
-/* 🔝 TOP BAR */
 .admin-topbar {
   height: 60px;
   background-color: #111;
@@ -18,13 +17,11 @@
   padding: 0 25px;
 }
 
-/* ADMIN NAME */
 .admin-name {
   font-size: 18px;
   font-weight: bold;
 }
 
-/* LOGOUT BUTTON */
 .logout-btn {
   background-color: red;
   color: white;
@@ -60,7 +57,7 @@
   gap: 40px;
 }
 
-/* DASHBOARD BOX */
+
 .admin-box {
   width: 220px;
   height: 130px;
@@ -76,14 +73,12 @@
   transition: all 0.3s ease;
 }
 
-/* HOVER EFFECT */
 .admin-box:hover {
   background-color: #111;
   color: white;
   transform: scale(1.05);
 }
 
-/* BACK BUTTON */
 .back-btn {
   margin-bottom: 20px;
   padding: 6px 14px;

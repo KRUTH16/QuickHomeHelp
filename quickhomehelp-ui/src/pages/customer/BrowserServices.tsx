@@ -1,6 +1,4 @@
 
-
-
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import ServiceCard from "./ServiceCard";
@@ -23,7 +21,7 @@ export default function BrowseServices() {
     useState<string>("");
 
   
-    localStorage.getItem("userId");
+    sessionStorage.getItem("userId");
 
   useEffect(() => {
 

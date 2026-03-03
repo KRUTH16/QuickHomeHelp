@@ -3,6 +3,7 @@ import "./Register.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import axios from "axios"; 
 
 export default function Register() {
 
@@ -15,15 +16,14 @@ export default function Register() {
     role: "CUSTOMER"
   });
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
   const register = async () => {
 
-    setError(""); 
+    setError("");
 
     if (!passwordRegex.test(form.password)) {
       setError(
@@ -39,11 +39,18 @@ export default function Register() {
       alert("Registered successfully");
       navigate("/login");
 
-    } catch (err: any) {
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
+    } catch (err: unknown) {
+
+      if (axios.isAxiosError(err)) {
+
+        if (err.response?.data?.message) {
+          setError(err.response.data.message);
+        } else {
+          setError("Registration failed.Enter Valid Credentials.");
+        }
+
       } else {
-        setError("Registration failed");
+        setError("Something went wrong.");
       }
     }
   };
@@ -64,6 +71,7 @@ export default function Register() {
         <input
           className="register-input"
           placeholder="Name"
+          value={form.name}
           onChange={e =>
             setForm({
               ...form,
@@ -75,6 +83,7 @@ export default function Register() {
         <input
           className="register-input"
           placeholder="Email"
+          value={form.email}
           onChange={e =>
             setForm({
               ...form,
@@ -87,6 +96,7 @@ export default function Register() {
           type="password"
           className="register-input"
           placeholder="Password"
+          value={form.password}
           onChange={e =>
             setForm({
               ...form,
@@ -95,7 +105,6 @@ export default function Register() {
           }
         />
 
-        {/* ✅ ERROR MESSAGE SHOWN HERE */}
         {error && (
           <p className="error-text">
             {error}
@@ -104,6 +113,7 @@ export default function Register() {
 
         <select
           className="register-select"
+          value={form.role}
           onChange={e =>
             setForm({
               ...form,

@@ -3,8 +3,6 @@ import { useState } from "react";
 import axios from "axios";
 import './AddService.css';
 
-
-
 interface ServiceForm {
   name: string;
   category: string;

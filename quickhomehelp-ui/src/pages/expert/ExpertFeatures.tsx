@@ -19,7 +19,7 @@ export default function ExpertFeatures({
   refresh,
 }: ExpertFeaturesProps) {
 
-  const [page, setPage] =
+  const [page] =
     useState("jobs");
 
   const toggle = async (

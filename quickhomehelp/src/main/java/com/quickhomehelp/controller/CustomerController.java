@@ -30,7 +30,7 @@ public class CustomerController {
     
     @PostMapping("/bookings")
     public Booking createBooking(
-        @RequestBody BookingRequest request,
+        @Valid @RequestBody BookingRequest request,
         @RequestParam Long userId) {
 
         return customerService

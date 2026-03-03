@@ -157,3 +157,10 @@
   box-shadow: 0 8px 18px
     rgba(79,70,229,0.35);
 }
+
+.pincode-error {
+  color: #d9534f;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}

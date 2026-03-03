@@ -1,5 +1,4 @@
 
-
 import { useState } from "react";
 import BookingForm from "./BookingForm";
 import "./ServiceCard.css";
@@ -50,6 +49,10 @@ export default function ServiceCard({
         <p>
           Base Price: ₹{service.basePrice}
         </p>
+
+        <p className="extra-note">
+  Additional charges may apply for extra time
+</p>
 
         <button
           className="book-btn"

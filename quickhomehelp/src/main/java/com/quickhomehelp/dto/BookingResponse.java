@@ -1,5 +1,7 @@
 package com.quickhomehelp.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +22,8 @@ public class BookingResponse {
     private boolean rated; 
     
     private String paymentStatus;
+ 
+    private LocalDateTime startTime;
 
 
 }

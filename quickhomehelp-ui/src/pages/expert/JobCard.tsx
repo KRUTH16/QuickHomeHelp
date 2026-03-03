@@ -17,9 +17,9 @@ interface Job {
   amount: number;
   status: string;
   paymentStatus: string;
-  durationMinutes?: number;
-  duration?: number;
-  duration_minutes?: number;
+  startTime?: string;
+  pauseTime?: string;
+  pausedSeconds?: number;
 }
 
 interface JobCardProps {
@@ -27,59 +27,36 @@ interface JobCardProps {
   refresh: () => void;
 }
 
-export default function JobCard({
-  job,
-  refresh,
-}: JobCardProps) {
+export default function JobCard({ job, refresh }: JobCardProps) {
 
-  const [showOtp, setShowOtp] =
-    useState<boolean>(false);
+  const [showOtp, setShowOtp] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [showReview, setShowReview] = useState(false);
+  const [decisionTimeLeft, setDecisionTimeLeft] = useState<number | null>(null);
+  const [decisionExpired, setDecisionExpired] = useState(false);
+  const [review, setReview] = useState<Review | null>(null);
 
-  const [timeLeft, setTimeLeft] =
-    useState<number | null>(null);
 
-  const [timerStarted, setTimerStarted] =
-    useState<boolean>(false);
-
-  const [paused, setPaused] =
-    useState<boolean>(false);
-
-  const [showReview, setShowReview] =
-    useState<boolean>(false);
-
-  const [decisionTimeLeft, setDecisionTimeLeft] =
-    useState<number | null>(null);
-
-  const [decisionExpired, setDecisionExpired] =
-    useState<boolean>(false);
-
-  const [review, setReview] =
-    useState<Review | null>(null);
 
   const accept = async () => {
-    await axios.patch(
-      `http://localhost:8080/expert/bookings/${job.id}/accept`
-    );
+    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/accept`);
     refresh();
   };
 
   const reject = async () => {
-    await axios.patch(
-      `http://localhost:8080/expert/bookings/${job.id}/reject`
-    );
+    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/reject`);
     refresh();
   };
 
   const autoReject = async () => {
     try {
-      await axios.patch(
-        `http://localhost:8080/expert/bookings/${job.id}/reject`
-      );
+      await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/reject`);
       refresh();
-    } catch {
-      console.error("Auto reject failed");
+    } catch (e) {
+      console.error(e);
     }
   };
+
 
   useEffect(() => {
     if (job.status === "ASSIGNED") {
@@ -110,77 +87,73 @@ export default function JobCard({
     return () => clearInterval(timer);
   }, [decisionTimeLeft, decisionExpired, job.status]);
 
-  const updateStatus = async (status: string) => {
-    await axios.patch(
-      `http://localhost:8080/expert/bookings/${job.id}/status?status=${status}`
-    );
+
+  const startJob = async () => {
+    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/start`);
     refresh();
   };
 
-  const getDuration = (): number => {
-    return (
-      job.durationMinutes ||
-      job.duration ||
-      job.duration_minutes ||
-      0
-    );
+  const pauseJob = async () => {
+    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/pause`);
+    refresh();
   };
 
-  const startTimer = () => {
-    const duration = getDuration();
-    if (!duration) return;
-    setTimeLeft(duration * 60);
-    setTimerStarted(true);
-    setPaused(false);
+  const resumeJob = async () => {
+    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/resume`);
+    refresh();
   };
+
+  const completeJob = async () => {
+    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/complete`);
+    refresh();
+  };
+
 
   useEffect(() => {
-    if (job.status === "IN_PROGRESS" && !timerStarted) {
-      const duration = getDuration();
-      if (duration > 0) {
-        setTimeLeft(duration * 60);
+
+    if (job.status !== "IN_PROGRESS" || !job.startTime) return;
+
+    const interval = setInterval(() => {
+
+      const start = new Date(job.startTime!).getTime();
+      const now = Date.now();
+      const paused = (job.pausedSeconds ?? 0) * 1000;
+
+      let elapsed = now - start - paused;
+
+      // freeze when paused
+      if (job.pauseTime) {
+        elapsed =
+          new Date(job.pauseTime).getTime() -
+          start -
+          paused;
       }
-    }
-  }, [job.status, timerStarted]);
 
-  useEffect(() => {
-    if (!timerStarted || paused || timeLeft === null) return;
+      setElapsedSeconds(Math.floor(elapsed / 1000));
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev === 1) {
-          clearInterval(timer);
-          updateStatus("COMPLETED");
-          return 0;
-        }
-        return (prev ?? 0) - 1;
-      });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, [timeLeft, paused, timerStarted]);
+    return () => clearInterval(interval);
 
-  const formatTime = (): string => {
-    if (timeLeft === null) return "";
-    const mins = Math.floor(timeLeft / 60);
-    const secs = timeLeft % 60;
+  }, [job]);
+
+  const formatTime = () => {
+    const mins = Math.floor(elapsedSeconds / 60);
+    const secs = elapsedSeconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
+
 
   useEffect(() => {
     if (job.status === "COMPLETED") {
       axios
-        .get<Review>(
-          `http://localhost:8080/ratings/booking/${job.id}`
-        )
-        .then((res) => {
-          if (res.data) {
-            setReview(res.data);
-          }
-        })
+        .get<Review>(`http://localhost:8080/ratings/booking/${job.id}`)
+        .then((res) => res.data && setReview(res.data))
         .catch(() => {});
     }
   }, [job.status, job.id]);
+
+
 
   return (
     <div className="job-card">
@@ -191,6 +164,7 @@ export default function JobCard({
       <p>Amount: ₹{job.amount}</p>
       <p>Status: {job.status}</p>
 
+      {/* ASSIGNED */}
       {job.status === "ASSIGNED" && (
         <div className="job-actions">
           {decisionTimeLeft !== null && (
@@ -198,87 +172,63 @@ export default function JobCard({
               Accept within: <b>{decisionTimeLeft}s</b>
             </p>
           )}
-          <button
-            className="accept-btn"
-            onClick={accept}
-            disabled={decisionExpired}
-          >
+          <button className="accept-btn" onClick={accept} disabled={decisionExpired}>
             Accept
           </button>
-          <button
-            className="reject-btn"
-            onClick={reject}
-            disabled={decisionExpired}
-          >
+          <button className="reject-btn" onClick={reject} disabled={decisionExpired}>
             Reject
           </button>
         </div>
       )}
 
+      {/* ACCEPTED */}
       {job.status === "ACCEPTED" && (
-        <button
-          className="otp-btn"
-          onClick={() => setShowOtp(true)}
-        >
+        <button className="otp-btn" onClick={() => setShowOtp(true)}>
           Verify OTP
         </button>
       )}
 
+      {/* IN PROGRESS */}
       {job.status === "IN_PROGRESS" && (
         <div className="progress-section">
-          {!timerStarted && (
-            <button
-              className="start-btn"
-              onClick={startTimer}
-            >
-              ▶ Start Timer
+
+          {!job.startTime && (
+            <button className="start-btn" onClick={startJob}>
+              ▶ Start Job
             </button>
           )}
 
-          {timerStarted && (
-            <p className="timer-text">
-              Time Left: <b>{formatTime()}</b>
-            </p>
+          {job.startTime && (
+            <>
+              <p className="timer-text">
+                Timer: <b>{formatTime()}</b>
+              </p>
+
+              <div className="timer-actions">
+                {!job.pauseTime ? (
+                  <button className="pause-btn" onClick={pauseJob}>
+                    Pause
+                  </button>
+                ) : (
+                  <button className="resume-btn" onClick={resumeJob}>
+                    Resume
+                  </button>
+                )}
+              </div>
+
+              <button className="end-btn" onClick={completeJob}>
+                End Job
+              </button>
+            </>
           )}
 
-          {timerStarted && (
-            <div className="timer-actions">
-              {!paused ? (
-                <button
-                  className="pause-btn"
-                  onClick={() => setPaused(true)}
-                >
-                  Pause
-                </button>
-              ) : (
-                <button
-                  className="resume-btn"
-                  onClick={() => setPaused(false)}
-                >
-                  Resume
-                </button>
-              )}
-            </div>
-          )}
-
-          {timerStarted && (
-            <button
-              className="end-btn"
-              onClick={() =>
-                updateStatus("COMPLETED")
-              }
-            >
-              End Job
-            </button>
-          )}
         </div>
       )}
 
+
       {job.status === "COMPLETED" && (
         <div className="completed-wrapper">
-          <div className="completed-badge">
-            Job Completed
-          </div>
+          <div className="completed-badge">Job Completed</div>
         </div>
       )}
 
@@ -286,16 +236,10 @@ export default function JobCard({
         <div className="completed-bottom">
 
           <div className="payment-area">
-            {job.paymentStatus !== "PAID" && (
-              <Payment
-                bookingId={job.id}
-                refresh={refresh}
-              />
-            )}
-            {job.paymentStatus === "PAID" && (
-              <div className="paid-label">
-                Payment Collected
-              </div>
+            {job.paymentStatus !== "PAID" ? (
+              <Payment bookingId={job.id} amount={job.amount} refresh={refresh}/>
+            ) : (
+              <div className="paid-label">Payment Collected</div>
             )}
           </div>
 
@@ -303,27 +247,20 @@ export default function JobCard({
             <div className="review-area">
               <button
                 className="review-toggle-btn"
-                onClick={() =>
-                  setShowReview(!showReview)
-                }
+                onClick={() => setShowReview(!showReview)}
               >
-                {showReview
-                  ? "Hide Rating"
-                  : "View Rating"}
+                {showReview ? "Hide Rating" : "View Rating"}
               </button>
 
-              {showReview && (
-                review ? (
+              {showReview &&
+                (review ? (
                   <div className="review-card">
                     <h4>⭐ {review.stars} / 5</h4>
                     <p>{review.comment}</p>
                   </div>
                 ) : (
-                  <p className="no-review">
-                    No review yet
-                  </p>
-                )
-              )}
+                  <p className="no-review">No review yet</p>
+                ))}
             </div>
           )}
 

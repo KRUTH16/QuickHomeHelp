@@ -1,36 +1,4 @@
 
-//
-//import jakarta.validation.constraints.*;
-//import lombok.Data;
-//import lombok.Getter;
-//import lombok.Setter;
-//
-//
-//@Data
-//@Getter
-//@Setter
-//
-//public class BookingRequest {
-//
-//    @NotNull
-//    private Long customerId;
-//
-//    @NotNull
-//    private Long serviceId;
-//
-//    @NotBlank
-//    private String address;
-//
-//    @NotBlank
-//    private String pincode;
-//    
-//    @NotBlank
-//    private Integer durationMinutes;   
-//
-//  
-//
-//}
-
 
 package com.quickhomehelp.dto;
 
@@ -58,7 +26,13 @@ public class BookingRequest {
     @NotBlank(message = "Address required")
     private String address;
 
+   
+    
     @NotBlank(message = "Pincode required")
+    @Pattern(
+        regexp = "^[0-9]{6}$",
+        message = "Pincode must be exactly 6 digits"
+    )
     private String pincode;
     
     

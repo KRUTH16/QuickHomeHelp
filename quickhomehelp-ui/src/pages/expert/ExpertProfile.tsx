@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import axios from "axios";
@@ -28,7 +26,6 @@ interface FormState {
   serviceIds: number[];
   pincode: string;
   address: string;
-  trainingDone: boolean;
 }
 
 interface ExpertProfileProps {
@@ -40,203 +37,143 @@ export default function ExpertProfile({
   profile,
   refresh,
 }: ExpertProfileProps) {
+  const [allServices, setAllServices] = useState<Service[]>([]);
 
-  const [allServices, setAllServices] =
-    useState<Service[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("");
+  const [form, setForm] = useState<FormState>({
+    serviceIds: [],
+    pincode: "",
+    address: "",
+  });
 
-  const [form, setForm] =
-    useState<FormState>({
-      serviceIds: [],
-      pincode: "",
-      address: "",
-      trainingDone: false,
-    });
+  const [pincodeError, setPincodeError] = useState<string>("");
 
   useEffect(() => {
-    axios
-      .get<Service[]>("http://localhost:8080/admin/services")
-      .then((res) => {
-        setAllServices(res.data);
-      });
+    axios.get<Service[]>("http://localhost:8080/admin/services").then((res) => {
+      setAllServices(res.data);
+    });
   }, []);
 
   useEffect(() => {
     setForm({
-      serviceIds: profile.services
-        ? profile.services.map((s) => s.id)
-        : [],
+      serviceIds: profile.services ? profile.services.map((s) => s.id) : [],
       pincode: profile.pincode || "",
       address: profile.address || "",
-      trainingDone: profile.trainingDone || false,
     });
   }, [profile]);
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
-    const { id, value, checked, type } =
-      e.target;
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
 
     setForm((prev) => ({
       ...prev,
-      [id]:
-        type === "checkbox"
-          ? checked
-          : value,
+      [id]: value,
+    }));
+
+    if (id === "pincode") {
+      const isValid = /^[0-9]{6}$/.test(value);
+
+      if (!isValid && value.length > 0) {
+        setPincodeError("Enter a valid six digit pincode");
+      } else {
+        setPincodeError("");
+      }
+    }
+  };
+
+  const handleServiceSelect = (serviceId: number) => {
+    setForm((prev) => ({
+      ...prev,
+      serviceIds: prev.serviceIds.includes(serviceId)
+        ? prev.serviceIds.filter((id) => id !== serviceId)
+        : [...prev.serviceIds, serviceId],
     }));
   };
 
-  const handleServiceSelect =
-    (serviceId: number) => {
-
-      setForm((prev) => ({
-        ...prev,
-        serviceIds: prev.serviceIds.includes(
-          serviceId
-        )
-          ? prev.serviceIds.filter(
-              (id) => id !== serviceId
-            )
-          : [...prev.serviceIds, serviceId],
-      }));
-    };
-
   const updateProfile = async () => {
 
-    await axios.patch(
-      "http://localhost:8080/expert/profile/update",
-      {
-        userId: profile.user.id,
-        ...form,
-      }
-    );
+    if (!/^[0-9]{6}$/.test(form.pincode)) {
+      setPincodeError("Enter a valid six digit pincode");
+      return;
+    }
+
+    await axios.patch("http://localhost:8080/expert/profile/update", {
+      userId: profile.user.id,
+      serviceIds: form.serviceIds,
+      pincode: form.pincode,
+      address: form.address,
+    });
 
     alert("Profile updated");
     refresh();
   };
 
-  const categories =
-    Array.from(
-      new Set(
-        allServices.map(
-          (s) => s.category
-        )
-      )
-    );
+  const categories = Array.from(new Set(allServices.map((s) => s.category)));
 
-  const filteredServices =
-    allServices.filter(
-      (s) =>
-        s.category ===
-        selectedCategory
-    );
+  const filteredServices = allServices.filter(
+    (s) => s.category === selectedCategory,
+  );
 
   return (
     <div id="expertProfileContainer">
-
-      <h2 id="expertName">
-        Welcome, {profile.user?.name}
-      </h2>
+      <h2 id="expertName">Welcome, {profile.user?.name}</h2>
 
       {profile.services &&
       profile.services.length > 0 &&
       profile.pincode &&
-      profile.address &&
-      profile.trainingDone ? (
-
-        <div
-          id="expertBioSection"
-          className="profile-card"
-        >
+      profile.address ? (
+        <div id="expertBioSection" className="profile-card">
           <h3>Profile Bio</h3>
 
           <p>
-            <b>Services:</b>{" "}
-            {profile.services
-              .map((s) => s.name)
-              .join(", ")}
+            <b>Services:</b> {profile.services.map((s) => s.name).join(", ")}
           </p>
 
           <p>
-            <b>Pincode:</b>{" "}
-            {profile.pincode}
+            <b>Pincode:</b> {profile.pincode}
           </p>
-
+         
           <p>
-            <b>Address:</b>{" "}
-            {profile.address}
-          </p>
-
-          <p>
-            <b>Training:</b>{" "}
-            Completed
+            <b>Address:</b> {profile.address}
           </p>
 
           <p className="verification-text">
-            Awaiting admin verification…
+            {profile.trainingDone
+              ? "Your profile is under admin review for final approval."
+              : "Access to the service provider panel will be granted after admin verification."}
           </p>
         </div>
-
       ) : (
-
-        <div
-          id="profileFormSection"
-          className="profile-card"
-        >
+        <div id="profileFormSection" className="profile-card">
           <h3>Complete Profile</h3>
 
           <select
             className="profile-input"
             value={selectedCategory}
-            onChange={(e) =>
-              setSelectedCategory(
-                e.target.value
-              )
-            }
+            onChange={(e) => setSelectedCategory(e.target.value)}
           >
-            <option value="">
-              Select Category
-            </option>
+            <option value="">Select Category</option>
 
-            {categories.map(
-              (cat) => (
-                <option
-                  key={cat}
-                  value={cat}
-                >
-                  {cat}
-                </option>
-              )
-            )}
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
           </select>
 
-          {selectedCategory && (
-            <div className="services-checkbox-group">
-              {filteredServices.map(
-                (service) => (
-                  <label
-                    key={service.id}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={form.serviceIds.includes(
-                        service.id
-                      )}
-                      onChange={() =>
-                        handleServiceSelect(
-                          service.id
-                        )
-                      }
-                    />
-                    {service.name}
-                  </label>
-                )
-              )}
-            </div>
-          )}
+          <div className="services-checkbox-group">
+            {filteredServices.map((service) => (
+              <label key={service.id} className="service-item">
+                <input
+                  type="checkbox"
+                  checked={form.serviceIds.includes(service.id)}
+                  onChange={() => handleServiceSelect(service.id)}
+                />
+                <span>{service.name}</span>
+              </label>
+            ))}
+          </div>
 
           <input
             id="pincode"
@@ -245,6 +182,8 @@ export default function ExpertProfile({
             value={form.pincode}
             onChange={handleChange}
           />
+           {pincodeError && <p className="pincode-error">{pincodeError}</p>}
+
 
           <input
             id="address"
@@ -254,18 +193,6 @@ export default function ExpertProfile({
             onChange={handleChange}
           />
 
-          <label className="checkbox-label">
-            Training Done
-            <input
-              id="trainingDone"
-              type="checkbox"
-              checked={
-                form.trainingDone
-              }
-              onChange={handleChange}
-            />
-          </label>
-
           <button
             id="updateProfileBtn"
             className="update-btn"
@@ -273,10 +200,8 @@ export default function ExpertProfile({
           >
             Update Profile
           </button>
-
         </div>
       )}
-
     </div>
   );
 }

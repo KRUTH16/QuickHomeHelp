@@ -19,6 +19,8 @@ public class Payment {
     private Long id;
 
     private Long bookingId;
+    
+    private Double amount; 
 
     private String method; 
 

@@ -15,7 +15,6 @@ import com.quickhomehelp.service.NotificationService;
 
 @RestController
 @RequestMapping("/notifications")
-@CrossOrigin
 public class NotificationController {
 
     @Autowired

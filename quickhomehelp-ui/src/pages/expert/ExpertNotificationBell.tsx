@@ -19,7 +19,7 @@ export default function ExpertNotificationBell() {
     useState<boolean>(false);
 
   const userId: string | null =
-    localStorage.getItem("userId");
+    sessionStorage.getItem("userId");
 
   const fetchNotifications = useCallback(async () => {
 

@@ -70,6 +70,13 @@ public class AdminController {
     }
     
     
+    //c
+    @PatchMapping("/experts/{id}/training")
+    public String markTrainingDone(@PathVariable Long id) {
+        return adminService.markTrainingDone(id);
+    }
+    
+    
 
 }
 

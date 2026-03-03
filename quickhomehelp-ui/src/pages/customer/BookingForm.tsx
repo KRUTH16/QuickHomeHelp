@@ -1,7 +1,7 @@
 
+
 import { useState } from "react";
 import axios from "axios";
-import DurationSelector from "./DurationSelector";
 import "./BookingForm.css";
 
 interface Service {
@@ -20,8 +20,6 @@ export default function BookingForm({
   close,
 }: BookingFormProps) {
 
-  const [duration, setDuration] =
-    useState<number>(service.baseDuration);
 
   const [address, setAddress] =
     useState<string>("");
@@ -29,9 +27,8 @@ export default function BookingForm({
   const [pincode, setPincode] =
     useState<string>("");
 
-  const price =
-    (duration / service.baseDuration) *
-    service.basePrice;
+const [pincodeError, setPincodeError] =
+  useState<string>("");
 
   const book = async () => {
 
@@ -39,17 +36,21 @@ export default function BookingForm({
       alert("Fill all fields");
       return;
     }
+    if (!/^[0-9]{6}$/.test(pincode)) {
+  setPincodeError("Enter a valid six digit pincode");
+  return;
+}
 
     try {
 
       const userId =
-        localStorage.getItem("userId");
+        sessionStorage.getItem("userId");
 
       const res = await axios.post(
         `http://localhost:8080/customer/bookings?userId=${userId}`,
         {
           serviceId: service.id,
-          durationMinutes: duration,
+          durationMinutes: service.baseDuration,
           address,
           pincode,
         }
@@ -77,21 +78,15 @@ export default function BookingForm({
   return (
     <div className="booking-form">
 
-      <div className="duration-section">
-        <p className="duration-title">
-          Select Duration
-        </p>
-
-        <DurationSelector
-          base={service.baseDuration}
-          duration={duration}
-          setDuration={setDuration}
-        />
-      </div>
+      <p className="booking-info">
+        Duration: {service.baseDuration} mins
+      </p>
 
       <p className="booking-price">
-        Price: ₹{price}
+        Price: ₹{service.basePrice}
       </p>
+
+
 
       <input
         className="booking-input"
@@ -106,10 +101,25 @@ export default function BookingForm({
         className="booking-input"
         placeholder="Enter Pincode"
         value={pincode}
-        onChange={(e) =>
-          setPincode(e.target.value)
-        }
+        onChange={(e) => {
+    const value = e.target.value;
+    setPincode(value);
+
+    const isValid = /^[0-9]{6}$/.test(value);
+
+    if (!isValid && value.length > 0) {
+      setPincodeError("Enter a valid six digit pincode");
+    } else {
+      setPincodeError("");
+    }
+  }}
+
       />
+      {pincodeError && (
+  <p className="pincode-error">
+    {pincodeError}
+  </p>
+)}
 
       <button
         className="confirm-booking-btn"

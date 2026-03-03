@@ -1,5 +1,4 @@
 
-
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
@@ -18,7 +17,7 @@ export default function NotificationBell() {
     useState<boolean>(false);
 
   const userId: string | null =
-    localStorage.getItem("userId");
+    sessionStorage.getItem("userId");
 
   const fetchNotifications = useCallback(async () => {
     if (!userId) return;

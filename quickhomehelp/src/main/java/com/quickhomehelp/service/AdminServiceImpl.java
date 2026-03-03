@@ -23,16 +23,20 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private BookingRepository bookingRepo;
 
+
+    
     @Override
     public String verifyExpert(Long expertProfileId) {
 
-        ExpertProfile expert = expertRepo
-            .findById(expertProfileId)
-            .orElseThrow(() ->
-                new RuntimeException("Expert not found"));
+        ExpertProfile expert = expertRepo.findById(expertProfileId)
+                .orElseThrow(() -> new RuntimeException("Expert not found"));
+
+        if (!expert.isTrainingDone()) {
+            throw new RuntimeException("Expert has not completed training");
+        }
 
         expert.setVerified(true);
-        expert.setRejected(false); 
+        expert.setRejected(false);
 
         expertRepo.save(expert);
 
@@ -56,8 +60,32 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
+    
     @Override
     public HomeService addService(HomeService service) {
+
+        String normalizedCategory = service.getCategory()
+                .trim()
+                .toUpperCase();
+
+        service.setCategory(normalizedCategory);
+
+        String normalizedName = service.getName()
+                .trim();
+
+        service.setName(normalizedName);
+
+        boolean exists = serviceRepo
+                .existsByNameAndCategory(
+                        normalizedName,
+                        normalizedCategory
+                );
+
+        if (exists) {
+            throw new RuntimeException(
+                    "Service already exists in this category"
+            );
+        }
 
         return serviceRepo.save(service);
     }
@@ -74,6 +102,7 @@ public class AdminServiceImpl implements AdminService {
     public List<HomeService> getAllServices() {
         return serviceRepo.findAll();
     }
+    
 
     @Override
     public HomeService updateService(Long id, HomeService updatedService) {
@@ -89,7 +118,8 @@ public class AdminServiceImpl implements AdminService {
 
         return serviceRepo.save(service);
     }
-
+    
+  
     @Override
     public String deleteService(Long id) {
 
@@ -100,6 +130,20 @@ public class AdminServiceImpl implements AdminService {
         serviceRepo.deleteById(id);
 
         return "Service deleted successfully";
+    }
+    
+    //change
+    @Override
+    public String markTrainingDone(Long id) {
+
+        ExpertProfile expert = expertRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expert not found"));
+
+        expert.setTrainingDone(true);
+
+        expertRepo.save(expert);
+
+        return "Training marked as completed";
     }
   
   

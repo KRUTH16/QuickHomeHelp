@@ -11,7 +11,6 @@ import com.quickhomehelp.service.PaymentService;
 
 @RestController
 @RequestMapping("/payments")
-@CrossOrigin
 public class PaymentController {
 
     @Autowired

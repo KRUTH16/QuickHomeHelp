@@ -31,13 +31,23 @@ public class Booking {
 
     private String pincode;
 
-    private Double amount;
-
     private String otp;
 
     private LocalDateTime createdAt;
-
     
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+    private Integer baseDuration;
+    private Double basePrice;
+    private Double perMinuteRate;
+
+    private Double amount; 
+    
+    private LocalDateTime pauseTime;
+    private Long pausedSeconds = 0L;
+    
+ 
     @ElementCollection
     @CollectionTable(
         name = "booking_rejected_experts",
@@ -46,20 +56,12 @@ public class Booking {
     @Column(name = "expert_id")
     private List<Long> rejectedExpertIds = new ArrayList<>();
     
-    
-    private Integer durationMinutes;
-
+ 
 
     private Boolean otpVerified;
 
     @Column(nullable = false)
     private String paymentStatus = "NOT_PAID";
+    
 
-
-
-
-
-
-
-  
 }

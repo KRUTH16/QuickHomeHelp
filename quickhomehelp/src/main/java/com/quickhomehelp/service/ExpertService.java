@@ -36,4 +36,12 @@ public interface ExpertService {
     
     ExpertProfile getProfileByUserId(Long userId);
 
+	Booking startJob(Long bookingId);
+
+	Booking completeJob(Long bookingId);
+
+	Booking resumeJob(Long bookingId);
+
+	Booking pauseJob(Long bookingId);
+
 }

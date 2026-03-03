@@ -45,7 +45,6 @@ export default function ViewServices() {
   fetchServices();
 };
 
-  // SAVE EDIT
   const saveEdit = async () => {
     if (!editingService) return;
 
@@ -89,7 +88,6 @@ export default function ViewServices() {
         ))}
       </div>
 
-      {/* EDIT MODAL */}
       {editingService && (
         <div className="modal-overlay">
           <div className="modal">

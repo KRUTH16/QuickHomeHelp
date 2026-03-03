@@ -1,114 +1,99 @@
 
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import axios from "axios";
 import "./Payment.css";
 
 interface PaymentProps {
   bookingId: number;
+  amount: number;
   refresh: () => void;
 }
 
 export default function PaymentComponent({
   bookingId,
+  amount,
   refresh,
 }: PaymentProps) {
 
-  const [method, setMethod] =
-    useState<string>("");
+  const [method, setMethod] = useState<string>("");
+  const [processing, setProcessing] = useState<boolean>(false);
+  const [paid, setPaid] = useState<boolean>(false);
 
-  const [processing, setProcessing] =
-    useState<boolean>(false);
-
-  const [paid, setPaid] =
-    useState<boolean>(false);
-
-      const collectPayment = async (selectedMethod: string) => {
-
-    await axios.post(
-      "http://localhost:8080/payments/collect",
-      null,
-      {
-        params: {
-          bookingId,
-          method: selectedMethod,
-        },
-      }
-    );
-  };
-
-  useEffect(() => {
-
-    if (method === "UPI") {
-
+  const collectPayment = async (selectedMethod: string) => {
+    try {
       setProcessing(true);
 
-      const timer = setTimeout(async () => {
+      await axios.post(
+        "http://localhost:8080/payments/collect",
+        null,
+        {
+          params: {
+            bookingId,
+            method: selectedMethod,
+          },
+        }
+      );
 
-        await collectPayment("UPI");
-
-        setProcessing(false);
-        setPaid(true);
-
-        refresh();
-
-      }, 4000); 
-
-      return () => clearTimeout(timer);
+      setPaid(true);
+      refresh();
+    } catch (error) {
+      console.error("Payment failed:", error);
+      alert("Payment failed. Try again.");
+    } finally {
+      setProcessing(false);
     }
-
-  }, [method]);
-
-
-
-  const handleCash = async () => {
-
-    await collectPayment("CASH");
-    setPaid(true);
-    refresh();
   };
 
   return (
-
     <div className="payment-box">
 
       <h4>Payment</h4>
 
+      <p className="payment-amount">
+        Amount to Collect: <b>₹{amount}</b>
+      </p>
+
       {!method && (
         <>
           <button onClick={() => setMethod("CASH")}>
-             Cash
+            Cash
           </button>
 
           <button onClick={() => setMethod("UPI")}>
-             UPI
+            UPI
           </button>
         </>
       )}
 
       {method === "UPI" && !paid && (
-
         <div className="qr-box">
-
           <img
             src="/dummy-qr.png"
             alt="UPI QR"
             width="150"
           />
 
-          {processing && (
+          {processing ? (
             <p className="processing-text">
-              Waiting for payment confirmation...
+              Processing payment...
             </p>
+          ) : (
+            <button
+              className="confirm-btn"
+              onClick={() => collectPayment("UPI")}
+            >
+              Confirm UPI Payment
+            </button>
           )}
-
         </div>
       )}
 
       {method === "CASH" && !paid && (
-
         <button
           className="confirm-btn"
-          onClick={handleCash}
+          onClick={() => collectPayment("CASH")}
+          disabled={processing}
         >
           Confirm Cash Payment
         </button>
@@ -116,7 +101,7 @@ export default function PaymentComponent({
 
       {paid && (
         <p className="success-text">
-           Payment Collected
+          Payment Collected
         </p>
       )}
 

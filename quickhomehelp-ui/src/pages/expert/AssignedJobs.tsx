@@ -1,20 +1,32 @@
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import JobCard from "./JobCard";
 import "./AssignedJobs.css";
 
-
+interface Job {
+  id: number;
+  address: string;
+  pincode: string;
+  amount: number;
+  status: string;
+  paymentStatus: string;
+}
 
 export default function ExpertJobs() {
-  const [jobs, setJobs] = useState<any[]>([]);
 
-  const expertId = localStorage.getItem("userId");
+  const [jobs, setJobs] = useState<Job[]>([]);
 
-  const [status, setStatus] = useState("ASSIGNED");
+  const expertId = sessionStorage.getItem("userId");
+
+  const [status, setStatus] = useState<string>("ASSIGNED");
 
   const fetchJobs = async () => {
-    const res = await axios.get(
-      `http://localhost:8080/expert/bookings?expertId=${expertId}&status=${status}`,
+
+    if (!expertId) return;
+
+    const res = await axios.get<Job[]>(
+      `http://localhost:8080/expert/bookings?expertId=${expertId}&status=${status}`
     );
 
     setJobs(res.data);

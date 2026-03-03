@@ -17,7 +17,6 @@ import com.quickhomehelp.service.RatingService;
 
 @RestController
 @RequestMapping("/ratings")
-@CrossOrigin
 public class RatingController {
 
     @Autowired

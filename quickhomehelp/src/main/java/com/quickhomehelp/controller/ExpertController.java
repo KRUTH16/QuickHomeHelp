@@ -9,6 +9,8 @@ import com.quickhomehelp.entity.Booking;
 import com.quickhomehelp.entity.ExpertProfile;
 import com.quickhomehelp.service.ExpertService;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -30,7 +32,7 @@ public class ExpertController {
 
     @PatchMapping("/profile/update")
     public ExpertProfile updateProfile(
-        @RequestBody
+        @Valid @RequestBody
         ExpertProfileRequest request) {
 
         return expertService
@@ -89,6 +91,29 @@ public class ExpertController {
         return expertService
             .verifyOtp(id, request.getOtp());
     }
+    
+    @PatchMapping("/bookings/{id}/start")
+    public Booking startJob(@PathVariable Long id) {
+        return expertService.startJob(id);
+    }
+    
+    @PatchMapping("/bookings/{id}/complete")
+    public Booking completeJob(@PathVariable Long id) {
+        return expertService.completeJob(id);
+    }
+    
+
+    @PatchMapping("/bookings/{id}/resume")
+    public Booking resumeJob(@PathVariable Long id) {
+        return expertService.resumeJob(id);
+    }
+
+    @PatchMapping("/bookings/{id}/pause")
+    public Booking pauseJob(@PathVariable Long id) {
+        return expertService.pauseJob(id);
+    }
+    
+    
     
      
 }

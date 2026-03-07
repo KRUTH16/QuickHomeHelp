@@ -1,26 +1,15 @@
-
 import { useState } from "react";
 import BookingForm from "./BookingForm";
 import "./ServiceCard.css";
+import type { Service } from "../../types/serviceTypes";
 
-interface Service {
-  id: number;
-  name: string;
-  category: string;
-  baseDuration: number;
-  basePrice: number;
-}
-
-interface ServiceCardProps {
+type ServiceCardProps = {
   service: Service;
-}
+};
 
-export default function ServiceCard({
-  service,
-}: ServiceCardProps) {
-
-  const [open, setOpen] =
-    useState<boolean>(false);
+export default function ServiceCard({ service }: ServiceCardProps) {
+  
+  const [open, setOpen] = useState<boolean>(false);
 
   const openModal = () => {
     setOpen(true);
@@ -35,66 +24,33 @@ export default function ServiceCard({
   return (
     <>
       <div className="service-card">
-
         <h3>{service.name}</h3>
-
-        <p>
-          Category: {service.category}
-        </p>
-
-        <p>
-          Base Duration: {service.baseDuration} mins
-        </p>
-
-        <p>
-          Base Price: ₹{service.basePrice}
-        </p>
-
+        <p>Category: {service.category}</p>
+        <p>Base Duration: {service.baseDuration} mins</p>
+        <p>Base Price: ₹{service.basePrice}</p>
         <p className="extra-note">
-  Additional charges may apply for extra time
-</p>
-
-        <button
-          className="book-btn"
-          onClick={openModal}
-        >
+          Additional charges may apply for extra time
+        </p>
+        <button className="book-btn" onClick={openModal}>
           Book Service
         </button>
-
       </div>
 
       {open && (
-
-        <div
-          className="modal-overlay"
-          onClick={closeModal}
-        >
-
+        <div className="modal-overlay" onClick={closeModal}>
           <div
             className="booking-modal"
             onClick={(e: React.MouseEvent<HTMLDivElement>) =>
               e.stopPropagation()
             }
           >
-
-            <span
-              className="close-btn"
-              onClick={closeModal}
-            >
-              ✖
+            <span className="booking-close-btn" onClick={closeModal}>
+              x
             </span>
-
             <h2>{service.name}</h2>
-
-            <BookingForm
-              service={service}
-              close={closeModal}
-            />
-
+            <BookingForm service={service} close={closeModal} />
           </div>
-
         </div>
-
       )}
     </>
   );

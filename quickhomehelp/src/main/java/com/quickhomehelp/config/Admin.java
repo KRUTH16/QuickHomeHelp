@@ -30,11 +30,9 @@ public class Admin implements CommandLineRunner {
 
             userRepository.save(admin);
 
-            System.out.println(" Default Admin Created");
+//            System.out.println(" Default Admin Created");
         }
-        else {
-            System.out.println(" Admin already exists");
-        }
+       
     }
 }
 

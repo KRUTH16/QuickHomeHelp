@@ -1,64 +1,32 @@
 import { useState } from "react";
-import axios from "axios";
-import './OtpModal.css';
+import "./OtpModal.css";
+import { verifyExpertJobOtp } from "../../api/expertApi";
+import type { OtpModalProps } from "../../types/bookingTypes";
 
-interface OtpModalProps {
-  bookingId: number;
-  close: () => void;
-  refresh: () => void;
-}
+export default function OtpModal({ bookingId, close, refresh }: OtpModalProps) {
 
-export default function OtpModal({
-  bookingId,
-  close,
-  refresh,
-}: OtpModalProps) {
-
-  const [otp, setOtp] =
-    useState("");
-
+  const [otp, setOtp] = useState("");
+  
   const verify = async () => {
-
-    await axios.post(
-      `http://localhost:8080/expert/bookings/${bookingId}/verify-otp`,
-      { otp }
-    );
-
+    await verifyExpertJobOtp(bookingId, otp);
     alert("OTP Verified");
-
     refresh();
     close();
   };
-
   return (
-
     <div className="modal-overlay">
-
       <div className="otp-modal">
-
-        <span
-          className="close-btn"
-          onClick={close}
-        >
-          ✖
+        <span className="close-btn" onClick={close}>
+          X
         </span>
-
         <h3>Verify OTP</h3>
-
         <input
           placeholder="Enter OTP"
           value={otp}
-          onChange={(e) =>
-            setOtp(e.target.value)
-          }
+          onChange={(e) => setOtp(e.target.value)}
         />
-
-        <button onClick={verify}>
-          Submit OTP
-        </button>
-
+        <button onClick={verify}>Submit OTP</button>
       </div>
-
     </div>
   );
 }

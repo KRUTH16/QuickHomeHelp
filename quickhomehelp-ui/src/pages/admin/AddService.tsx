@@ -1,14 +1,8 @@
-
 import { useState } from "react";
 import axios from "axios";
-import './AddService.css';
-
-interface ServiceForm {
-  name: string;
-  category: string;
-  baseDuration: string;
-  basePrice: string;
-}
+import "./AddService.css";
+import { addService } from "../../api/adminApi";
+import type { ServiceForm } from "../../types/serviceTypes";
 
 export default function AddService() {
   const [form, setForm] = useState<ServiceForm>({
@@ -17,17 +11,12 @@ export default function AddService() {
     baseDuration: "",
     basePrice: "",
   });
-
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-
     setForm({
       ...form,
       [id]: value,
@@ -38,81 +27,46 @@ export default function AddService() {
     setLoading(true);
     setSuccessMsg("");
     setErrorMsg("");
-
     try {
-      await axios.post(
-        "http://localhost:8080/admin/services",
-        {
-          ...form,
-          baseDuration: Number(form.baseDuration),
-          basePrice: Number(form.basePrice),
-        }
-      );
-
-      setSuccessMsg(
-        "Service added successfully "
-      );
-
+      await addService({
+        ...form,
+        baseDuration: Number(form.baseDuration),
+        basePrice: Number(form.basePrice),
+      });
+      setSuccessMsg("Service added successfully ");
       setForm({
         name: "",
         category: "",
         baseDuration: "",
         basePrice: "",
       });
-    }
-
-    catch (error: unknown) {
-  if (axios.isAxiosError(error)) {
-    setErrorMsg(
-      error.response?.data?.message ||
-      "Failed to add service"
-    );
-  } else {
-    setErrorMsg("Something went wrong");
-  }
-}
-
-    finally {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setErrorMsg(error.response?.data?.message || "Failed to add service");
+      } else {
+        setErrorMsg("Something went wrong");
+      }
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      id="addServiceContainer"
-      className="add-service-container"
-    >
-      <h2
-        id="addServiceTitle"
-        className="add-service-title"
-      >
-        Add Service 
+    <div id="addServiceContainer" className="add-service-container">
+      <h2 id="addServiceTitle" className="add-service-title">
+        Add Service
       </h2>
-
       {successMsg && (
-        <p
-          id="successMessage"
-          className="success-message"
-        >
+        <p id="successMessage" className="success-message">
           {successMsg}
         </p>
       )}
-
       {errorMsg && (
-        <p
-          id="errorMessage"
-          className="error-message"
-        >
+        <p id="errorMessage" className="error-message">
           {errorMsg}
         </p>
       )}
-
-      <div
-        id="serviceForm"
-        className="service-form"
-      >
-       
-
+      <div id="serviceForm" className="service-form">
         <input
           id="category"
           className="input-field"
@@ -120,7 +74,6 @@ export default function AddService() {
           value={form.category}
           onChange={handleChange}
         />
-
         <input
           id="name"
           className="input-field"
@@ -128,7 +81,6 @@ export default function AddService() {
           value={form.name}
           onChange={handleChange}
         />
-
         <input
           id="baseDuration"
           type="number"
@@ -137,7 +89,6 @@ export default function AddService() {
           value={form.baseDuration}
           onChange={handleChange}
         />
-
         <input
           id="basePrice"
           type="number"
@@ -146,16 +97,13 @@ export default function AddService() {
           value={form.basePrice}
           onChange={handleChange}
         />
-
         <button
           id="addServiceBtn"
           className="add-service-btn"
           onClick={handleSubmit}
           disabled={loading}
         >
-          {loading
-            ? "Adding..."
-            : "Add Service"}
+          {loading ? "Adding..." : "Add Service"}
         </button>
       </div>
     </div>

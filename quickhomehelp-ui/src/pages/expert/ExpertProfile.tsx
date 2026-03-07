@@ -1,47 +1,29 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
-import axios from "axios";
 import "./ExpertProfile.css";
+import {
+  getServicesForExpertProfile,
+  updateExpertProfile,
+} from "../../api/expertApi";
 
-interface Service {
-  id: number;
-  name: string;
-  category: string;
-}
+import type {
+  ExpertProfile,
+  ExpertProfileFormState,
+  ServiceOption,
+} from "../../types/serviceTypes";
 
-interface User {
-  id: number;
-  name: string;
-}
+type ExpertProfileProps = {
+  profile: ExpertProfile;
+  refresh: () => Promise<void>;
+};
 
-interface ExpertProfileType {
-  user: User;
-  services: Service[];
-  pincode: string;
-  address: string;
-  trainingDone: boolean;
-}
-
-interface FormState {
-  serviceIds: number[];
-  pincode: string;
-  address: string;
-}
-
-interface ExpertProfileProps {
-  profile: ExpertProfileType;
-  refresh: () => void;
-}
-
-export default function ExpertProfile({
+export default function ExpertProfilePage({
   profile,
   refresh,
 }: ExpertProfileProps) {
-  const [allServices, setAllServices] = useState<Service[]>([]);
-
+  const [allServices, setAllServices] = useState<ServiceOption[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = useState<ExpertProfileFormState>({
     serviceIds: [],
     pincode: "",
     address: "",
@@ -50,10 +32,13 @@ export default function ExpertProfile({
   const [pincodeError, setPincodeError] = useState<string>("");
 
   useEffect(() => {
-    axios.get<Service[]>("http://localhost:8080/admin/services").then((res) => {
+    const fetchAllServices = async () => {
+      const res = await getServicesForExpertProfile();
       setAllServices(res.data);
-    });
+    };
+    fetchAllServices();
   }, []);
+
 
   useEffect(() => {
     setForm({
@@ -65,7 +50,6 @@ export default function ExpertProfile({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [id]: value,
@@ -73,7 +57,6 @@ export default function ExpertProfile({
 
     if (id === "pincode") {
       const isValid = /^[0-9]{6}$/.test(value);
-
       if (!isValid && value.length > 0) {
         setPincodeError("Enter a valid six digit pincode");
       } else {
@@ -91,26 +74,22 @@ export default function ExpertProfile({
     }));
   };
 
-  const updateProfile = async () => {
-
+  const updateProfileData = async () => {
     if (!/^[0-9]{6}$/.test(form.pincode)) {
       setPincodeError("Enter a valid six digit pincode");
       return;
     }
-
-    await axios.patch("http://localhost:8080/expert/profile/update", {
+    await updateExpertProfile({
       userId: profile.user.id,
       serviceIds: form.serviceIds,
       pincode: form.pincode,
       address: form.address,
     });
-
     alert("Profile updated");
     refresh();
   };
 
   const categories = Array.from(new Set(allServices.map((s) => s.category)));
-
   const filteredServices = allServices.filter(
     (s) => s.category === selectedCategory,
   );
@@ -118,26 +97,21 @@ export default function ExpertProfile({
   return (
     <div id="expertProfileContainer">
       <h2 id="expertName">Welcome, {profile.user?.name}</h2>
-
       {profile.services &&
       profile.services.length > 0 &&
       profile.pincode &&
       profile.address ? (
         <div id="expertBioSection" className="profile-card">
           <h3>Profile Bio</h3>
-
           <p>
             <b>Services:</b> {profile.services.map((s) => s.name).join(", ")}
           </p>
-
           <p>
             <b>Pincode:</b> {profile.pincode}
           </p>
-         
           <p>
             <b>Address:</b> {profile.address}
           </p>
-
           <p className="verification-text">
             {profile.trainingDone
               ? "Your profile is under admin review for final approval."
@@ -147,14 +121,12 @@ export default function ExpertProfile({
       ) : (
         <div id="profileFormSection" className="profile-card">
           <h3>Complete Profile</h3>
-
           <select
             className="profile-input"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
             <option value="">Select Category</option>
-
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -174,7 +146,7 @@ export default function ExpertProfile({
               </label>
             ))}
           </div>
-
+          
           <input
             id="pincode"
             className="profile-input"
@@ -182,9 +154,7 @@ export default function ExpertProfile({
             value={form.pincode}
             onChange={handleChange}
           />
-           {pincodeError && <p className="pincode-error">{pincodeError}</p>}
-
-
+          {pincodeError && <p className="pincode-error">{pincodeError}</p>}
           <input
             id="address"
             className="profile-input"
@@ -192,11 +162,10 @@ export default function ExpertProfile({
             value={form.address}
             onChange={handleChange}
           />
-
           <button
             id="updateProfileBtn"
             className="update-btn"
-            onClick={updateProfile}
+            onClick={updateProfileData}
           >
             Update Profile
           </button>

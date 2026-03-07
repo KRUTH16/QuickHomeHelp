@@ -7,6 +7,9 @@ import com.quickhomehelp.dto.ExpertProfileRequest;
 import com.quickhomehelp.entity.Booking;
 import com.quickhomehelp.entity.ExpertProfile;
 import com.quickhomehelp.entity.HomeService;
+import com.quickhomehelp.exception.BadRequestException;
+import com.quickhomehelp.exception.DuplicateResourceException;
+import com.quickhomehelp.exception.ResourceNotFoundException;
 import com.quickhomehelp.repository.BookingRepository;
 import com.quickhomehelp.repository.ExpertProfileRepository;
 import com.quickhomehelp.repository.ServiceRepository;
@@ -57,7 +60,7 @@ public class ExpertServiceImpl
         Booking booking =
             bookingRepo.findById(bookingId)
             .orElseThrow(() ->
-                new RuntimeException(
+                new ResourceNotFoundException(
                     "Booking not found"));
 
         booking.setStatus(status);
@@ -74,10 +77,10 @@ public class ExpertServiceImpl
         Booking booking =
             bookingRepo.findById(bookingId)
             .orElseThrow(() ->
-                new RuntimeException("Booking not found"));
+                new ResourceNotFoundException("Booking not found"));
 
         if (!booking.getOtp().equals(otp)) {
-            throw new RuntimeException("Invalid OTP");
+            throw new BadRequestException("Invalid OTP");
         }
 
         booking.setOtpVerified(true);
@@ -94,16 +97,16 @@ public class ExpertServiceImpl
         Booking booking = bookingRepo
                 .findById(bookingId)
                 .orElseThrow(() ->
-                    new RuntimeException("Booking not found"));
+                    new ResourceNotFoundException("Booking not found"));
 
         if (!booking.getStatus().equals("ASSIGNED")) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                 "Booking is not in ASSIGNED state");
         }
 
 
         if (booking.getOtp() != null) {
-            throw new RuntimeException(
+            throw new DuplicateResourceException(
                 "OTP already generated for this booking");
         }
 
@@ -147,13 +150,13 @@ public class ExpertServiceImpl
         Booking booking =
             bookingRepo.findById(bookingId)
             .orElseThrow(() ->
-                new RuntimeException("Booking not found"));
+                new ResourceNotFoundException("Booking not found"));
 
         Long rejectedExpertId =
             booking.getExpertId();
 
         if (rejectedExpertId == null) {
-            throw new RuntimeException(
+            throw new ResourceNotFoundException(
                 "No expert assigned to reject");
         }
 
@@ -193,7 +196,7 @@ public class ExpertServiceImpl
         ExpertProfile expert = expertRepo
                 .findByUserId(request.getUserId())
                 .orElseThrow(() ->
-                        new RuntimeException("Expert profile not found"));
+                        new ResourceNotFoundException("Expert profile not found"));
 
         List<HomeService> selectedServices =
                 serviceRepo.findAllById(request.getServiceIds());
@@ -215,11 +218,11 @@ public class ExpertServiceImpl
             ExpertProfile expert =
                 expertRepo.findById(expertId)
                 .orElseThrow(() ->
-                    new RuntimeException(
+                    new ResourceNotFoundException(
                         "Expert not found"));
 
             if (!expert.isVerified()) {
-                throw new RuntimeException(
+                throw new BadRequestException(
                     "Admin verification pending");
             }
 
@@ -235,7 +238,7 @@ public class ExpertServiceImpl
             return expertRepo
                 .findByUserId(userId)
                 .orElseThrow(() ->
-                    new RuntimeException(
+                    new ResourceNotFoundException(
                         "Expert profile not found"));
         }
         
@@ -245,10 +248,10 @@ public class ExpertServiceImpl
 
             Booking booking = bookingRepo.findById(bookingId)
                     .orElseThrow(() ->
-                        new RuntimeException("Booking not found"));
+                        new ResourceNotFoundException("Booking not found"));
 
             if (!booking.getStatus().equals("IN_PROGRESS")) {
-                throw new IllegalStateException(
+                throw new BadRequestException(
                         "Job must be in IN_PROGRESS state");
             }
 
@@ -269,15 +272,15 @@ public class ExpertServiceImpl
 
             Booking booking = bookingRepo.findById(bookingId)
                     .orElseThrow(() ->
-                        new RuntimeException("Booking not found"));
+                        new ResourceNotFoundException("Booking not found"));
 
             if (!booking.getStatus().equals("IN_PROGRESS")) {
-                throw new IllegalStateException(
+                throw new BadRequestException(
                         "Job is not in progress");
             }
 
             if (booking.getStartTime() == null) {
-                throw new IllegalStateException(
+                throw new BadRequestException(
                         "Job was never started");
             }
 
@@ -317,10 +320,10 @@ public class ExpertServiceImpl
         public Booking pauseJob(Long bookingId) {
 
             Booking booking = bookingRepo.findById(bookingId)
-                    .orElseThrow(() -> new RuntimeException("Booking not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
             if (!booking.getStatus().equals("IN_PROGRESS"))
-                throw new IllegalStateException("Job not running");
+                throw new BadRequestException("Job not running");
 
             if (booking.getPauseTime() == null) {
                 booking.setPauseTime(LocalDateTime.now());
@@ -333,7 +336,7 @@ public class ExpertServiceImpl
         public Booking resumeJob(Long bookingId) {
 
             Booking booking = bookingRepo.findById(bookingId)
-                    .orElseThrow(() -> new RuntimeException("Booking not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
             if (booking.getPauseTime() == null)
                 return booking;

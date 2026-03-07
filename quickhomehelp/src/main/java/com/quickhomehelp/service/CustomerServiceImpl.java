@@ -8,6 +8,7 @@ import com.quickhomehelp.dto.BookingResponse;
 import com.quickhomehelp.entity.Booking;
 import com.quickhomehelp.entity.HomeService;
 import com.quickhomehelp.entity.User;
+import com.quickhomehelp.exception.ResourceNotFoundException;
 import com.quickhomehelp.repository.BookingRepository;
 import com.quickhomehelp.repository.RatingRepository;
 import com.quickhomehelp.repository.ServiceRepository;
@@ -54,12 +55,12 @@ public class CustomerServiceImpl implements CustomerService {
         HomeService service = serviceRepo
                 .findById(request.getServiceId())
                 .orElseThrow(() ->
-                    new RuntimeException("Service not found"));
+                    new ResourceNotFoundException("Service not found"));
 
         User customer = userRepo
                 .findById(userId)
                 .orElseThrow(() ->
-                    new RuntimeException("Customer not found"));
+                    new ResourceNotFoundException("Customer not found"));
 
         Booking booking = new Booking();
 
@@ -98,7 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         return userRepo.findById(id)
             .orElseThrow(() ->
-                new RuntimeException(
+                new ResourceNotFoundException(
                     "Customer not found"
                 )
             );
@@ -110,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
         Booking booking = bookingRepo
             .findById(bookingId)
             .orElseThrow(() ->
-                new RuntimeException("Booking not found"));
+                new ResourceNotFoundException("Booking not found"));
 
         return booking.getOtp();
     }

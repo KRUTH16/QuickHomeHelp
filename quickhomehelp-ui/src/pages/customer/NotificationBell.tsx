@@ -1,83 +1,49 @@
-
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
-
-interface Notification {
-  id: number;
-  message: string;
-  readStatus: boolean;
-}
+import {
+  getCustomerNotifications,
+  markCustomerNotificationsRead,
+} from "../../api/customerApi";
+import type { Notification } from "../../types/bookingTypes";
 
 export default function NotificationBell() {
 
-  const [notifications, setNotifications] =
-    useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
 
-  const [open, setOpen] =
-    useState<boolean>(false);
-
-  const userId: string | null =
-    sessionStorage.getItem("userId");
+  const userId: string | null = sessionStorage.getItem("userId");
 
   const fetchNotifications = useCallback(async () => {
-    if (!userId) return;
-
-    const res = await axios.get(
-      `http://localhost:8080/notifications/${userId}`
-    );
-
+    if (!userId) {
+      return;
+    }
+    const res = await getCustomerNotifications(userId);
     setNotifications(res.data);
   }, [userId]);
-
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
 
   const handleClick = async () => {
-
     const newState = !open;
     setOpen(newState);
-
     if (!open && userId) {
-
-      await axios.patch(
-        `http://localhost:8080/notifications/read-all/${userId}`
-      );
-
+      await markCustomerNotificationsRead(userId);
       await fetchNotifications();
     }
   };
-
-  const unreadCount =
-    notifications.filter(n => !n.readStatus).length;
-
+  const unreadCount = notifications.filter((n) => !n.readStatus).length;
+  
   return (
-
     <div className="bell" onClick={handleClick}>
-
       🔔 {unreadCount > 0 && unreadCount}
-
       {open && (
-
         <div className="dropdown">
-
-          {notifications.length === 0 && (
-            <div>No notifications</div>
-          )}
-
-          {notifications.map(n => (
-
-            <div key={n.id}>
-              {n.message}
-            </div>
-
+          {notifications.length === 0 && <div>No notifications</div>}
+          {notifications.map((n) => (
+            <div key={n.id}>{n.message}</div>
           ))}
-
         </div>
-
       )}
-
     </div>
-
   );
 }

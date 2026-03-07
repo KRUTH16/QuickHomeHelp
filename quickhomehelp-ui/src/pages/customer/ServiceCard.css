@@ -117,22 +117,25 @@
 
 /* CLOSE BUTTON */
 
-.close-btn {
-
+.booking-close-btn {
   position: absolute;
-
   top: 12px;
   right: 16px;
-
   font-size: 18px;
-
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
   cursor: pointer;
-
   color: #6b7280;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.close-btn:hover {
+.booking-close-btn:hover {
   color: #ef4444;
+  background-color: #fee2e2;
+  transform: none;
 }
 
 

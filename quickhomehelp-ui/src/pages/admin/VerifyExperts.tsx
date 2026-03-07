@@ -1,38 +1,21 @@
-
-
 import { useEffect, useState } from "react";
-import axios from "axios";
 import "./VerifyExperts.css";
+import {
+  getExpertsForVerification,
+  markExpertTrainingDone,
+  rejectExpert,
+  verifyExpert,
+} from "../../api/adminApi";
 
-interface HomeService {
-  id: number;
-  name: string;
-  category: string;
-}
-
-interface ExpertProfile {
-  id: number;
-  services: HomeService[];
-  pincode: string;
-  address: string;
-  trainingDone: boolean;
-  verified: boolean;
-  rejected?: boolean;
-
-  user: {
-    id: number;
-    name: string;
-  };
-}
+import type { ExpertProfile } from "../../types/serviceTypes";
 
 export default function VerifyExperts() {
+  
   const [experts, setExperts] = useState<ExpertProfile[]>([]);
 
   const fetchExperts = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/admin/experts"
-      );
+      const res = await getExpertsForVerification();
 
       const data: ExpertProfile[] = Array.isArray(res.data)
         ? res.data
@@ -52,9 +35,7 @@ export default function VerifyExperts() {
 
   const markTrainingDone = async (id: number) => {
     try {
-      await axios.patch(
-        `http://localhost:8080/admin/experts/${id}/training`
-      );
+      await markExpertTrainingDone(id);
       fetchExperts();
     } catch (error) {
       console.error("Error marking training:", error);
@@ -63,9 +44,7 @@ export default function VerifyExperts() {
 
   const verify = async (id: number) => {
     try {
-      await axios.patch(
-        `http://localhost:8080/admin/experts/${id}/verify`
-      );
+      await verifyExpert(id);
       fetchExperts();
     } catch (error) {
       console.error("Error verifying expert:", error);
@@ -74,9 +53,7 @@ export default function VerifyExperts() {
 
   const reject = async (id: number) => {
     try {
-      await axios.patch(
-        `http://localhost:8080/admin/experts/${id}/reject`
-      );
+      await rejectExpert(id);
       fetchExperts();
     } catch (error) {
       console.error("Error rejecting expert:", error);

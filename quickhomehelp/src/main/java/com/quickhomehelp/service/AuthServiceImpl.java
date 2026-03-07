@@ -7,6 +7,9 @@ import com.quickhomehelp.dto.LoginRequest;
 import com.quickhomehelp.dto.LoginResponse;
 import com.quickhomehelp.dto.RegisterRequest;
 import com.quickhomehelp.entity.*;
+import com.quickhomehelp.exception.DuplicateResourceException;
+import com.quickhomehelp.exception.ResourceNotFoundException;
+import com.quickhomehelp.exception.UnauthorizedActionException;
 import com.quickhomehelp.repository.*;
 
 import lombok.Getter;
@@ -24,8 +27,13 @@ public class AuthServiceImpl implements AuthService {
     public String register(RegisterRequest request) {
 
         if (request.getRole().equalsIgnoreCase("ADMIN")) {
-            throw new RuntimeException(
+            throw new UnauthorizedActionException(
                 "Admin registration not allowed");
+        }
+        
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new DuplicateResourceException(
+                    "Email already registered");
         }
 
         Role role = Role.valueOf(
@@ -60,12 +68,12 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() ->
-                    new RuntimeException("User not found"));
+                    new ResourceNotFoundException("User not found"));
 
         if (!user.getPassword()
                 .equals(request.getPassword())) {
 
-            throw new RuntimeException("Invalid password");
+            throw new UnauthorizedActionException("Invalid password");
         }
 
         return new LoginResponse(

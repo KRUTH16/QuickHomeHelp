@@ -1,131 +1,65 @@
-
-
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-import ExpertProfile from "./ExpertProfile";
-import ExpertFeatures from "./ExpertFeatures";
+import { useNavigate } from "react-router-dom";
 import ExpertNotificationBell from "./ExpertNotificationBell";
+import ExpertFeatures from "./ExpertFeatures";
+import ExpertProfile from "./ExpertProfile";
+import { getExpertProfile } from "../../api/expertApi";
+import type { ExpertProfile as ExpertProfileType } from "../../types/serviceTypes";
 import "./ExpertDashboard.css";
 
-interface Service {
-  id: number;
-  name: string;
-  category: string;
-}
-
-interface User {
-  id: number;
-  name: string;
-}
-
-interface ExpertProfileType {
-  id:number;
-  user: User;
-  services: Service[];
-  pincode: string;
-  address: string;
-  trainingDone: boolean;
-  verified: boolean;
-  online: boolean;
-}
-
 export default function ExpertDashboard() {
+  const [profile, setProfile] = useState<ExpertProfileType | null>(null);
+  const navigate = useNavigate();
+  const userId = sessionStorage.getItem("userId");
 
-  const [profile, setProfile] =
-    useState<ExpertProfileType | null>(null);
+  const refreshProfile = async () => {
+    if (!userId) {
+      return;
+    }
 
-  const userId: string | null =
-    sessionStorage.getItem("userId");
-
-  const fetchProfile = async () => {
-
-    if (!userId) return;
-
-    const res = await axios.get<ExpertProfileType>(
-      `http://localhost:8080/expert/profile/${userId}`
-    );
-
+    const res = await getExpertProfile(userId);
     setProfile(res.data);
   };
 
   useEffect(() => {
+    if (!userId) {
+      return;
+    }
 
-    if (!userId) return;
-
-    fetchProfile();
-
+    refreshProfile();
   }, [userId]);
 
-  if (!profile)
-    return (
-      <p className="expert-dashboard-loading">
-        Loading...
-      </p>
-    );
+  if (!profile) {
+    return <p className="expert-dashboard-loading">Loading...</p>;
+  }
 
   const logout = () => {
     sessionStorage.clear();
-    window.location.href = "/";
+    navigate("/login");
   };
 
   return (
-
     <div className="expert-dashboard-container">
-
       <div className="expert-topbar">
-
         <div className="expert-info">
-
-          <div className="profile-icon">
-            👤
-          </div>
-
-          <span className="expert-name">
-            {profile.user?.name}
-          </span>
-
+          <span className="expert-name">{profile.user?.name}</span>
         </div>
-
-        <h1 className="dashboard-title">
-          Expert Dashboard
-        </h1>
-
+        <h1 className="dashboard-title">Expert Dashboard</h1>
         <div className="topbar-actions">
-
           <ExpertNotificationBell />
-
-          <button
-            className="logout-btn"
-            onClick={logout}
-          >
+          <button className="logout-btn" onClick={logout}>
             Logout
           </button>
-
         </div>
-
       </div>
 
       <div className="expert-dashboard-content">
-
         {!profile.verified ? (
-
-          <ExpertProfile
-            profile={profile}
-            refresh={fetchProfile}
-          />
-
+          <ExpertProfile profile={profile} refresh={refreshProfile} />
         ) : (
-
-          <ExpertFeatures
-            profile={profile}
-            refresh={fetchProfile}
-          />
-
+          <ExpertFeatures profile={profile} refresh={refreshProfile} />
         )}
-
       </div>
-
     </div>
   );
 }

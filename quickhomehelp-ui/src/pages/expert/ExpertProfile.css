@@ -1,6 +1,4 @@
-/* =====================================================
-   EXPERT PROFILE PAGE
-===================================================== */
+/* EXPERT PROFILE PAGE */
 
 #expertProfileContainer {
   min-height: 100vh;
@@ -18,7 +16,7 @@
 }
 
 
-/* ===== EXPERT NAME ===== */
+/* EXPERT NAME */
 
 #expertName {
   font-size: 28px;
@@ -28,7 +26,7 @@
 }
 
 
-/* ===== CARD WRAPPER ===== */
+/* CARD WRAPPER */
 
 .profile-card {
   background: #ffffff;
@@ -44,7 +42,7 @@
 }
 
 
-/* ===== SECTION TITLE ===== */
+/* SECTION TITLE */
 
 .profile-card h3 {
   text-align: center;
@@ -53,7 +51,7 @@
 }
 
 
-/* ===== BIO TEXT ===== */
+/* BIO TEXT */
 
 .profile-card p {
   font-size: 14px;
@@ -61,7 +59,7 @@
 }
 
 
-/* ===== VERIFICATION TEXT ===== */
+/* VERIFICATION TEXT */
 
 .verification-text {
   margin-top: 10px;
@@ -74,7 +72,7 @@
 }
 
 
-/* ===== INPUT FIELDS ===== */
+/* INPUT FIELDS */
 
 .profile-input {
   padding: 11px 13px;
@@ -93,9 +91,7 @@
 }
 
 
-/* ===== CHECKBOX ===== */
-
-/* Container */
+/* CHECKBOX CONTAINER */
 .services-checkbox-group {
   display: flex;
   flex-wrap: wrap;
@@ -103,7 +99,7 @@
   margin-top: 10px;
 }
 
-/* Each checkbox item */
+/* CHECKBOX ITEM */
 .service-item {
   display: flex;
   align-items: center;
@@ -115,7 +111,7 @@
   font-size: 14px;
 }
 
-/* Checkbox spacing */
+/* CHECKBOX INPUT */
 .service-item input[type="checkbox"] {
   width: 16px;
   height: 16px;
@@ -123,7 +119,7 @@
 }
 
 
-/* ===== UPDATE BUTTON ===== */
+/* UPDATE BUTTON */
 
 .update-btn {
   margin-top: 10px;
@@ -155,7 +151,7 @@
 }
 
 
-/* ===== RESPONSIVE ===== */
+/* RESPONSIVE */
 
 @media (max-width: 480px) {
 

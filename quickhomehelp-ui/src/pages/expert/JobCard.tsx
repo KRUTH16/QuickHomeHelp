@@ -1,34 +1,23 @@
-
 import { useState, useEffect } from "react";
-import axios from "axios";
 import OtpModal from "./OtpModal";
 import Payment from "./Payment";
 import "./JobCard.css";
 
-interface Review {
-  stars: number;
-  comment: string;
-}
+import {
+  acceptExpertJob,
+  completeExpertJob,
+  getBookingRating,
+  pauseExpertJob,
+  rejectExpertJob,
+  resumeExpertJob,
+  startExpertJob,
+} from "../../api/expertApi";
 
-interface Job {
-  id: number;
-  address: string;
-  pincode: string;
-  amount: number;
-  status: string;
-  paymentStatus: string;
-  startTime?: string;
-  pauseTime?: string;
-  pausedSeconds?: number;
-}
-
-interface JobCardProps {
-  job: Job;
-  refresh: () => void;
-}
+import type { JobCardProps } from "../../types/bookingTypes";
+import type { Review } from "../../types/ratingTypes";
 
 export default function JobCard({ job, refresh }: JobCardProps) {
-
+  
   const [showOtp, setShowOtp] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showReview, setShowReview] = useState(false);
@@ -36,28 +25,22 @@ export default function JobCard({ job, refresh }: JobCardProps) {
   const [decisionExpired, setDecisionExpired] = useState(false);
   const [review, setReview] = useState<Review | null>(null);
 
-
-
   const accept = async () => {
-    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/accept`);
+    await acceptExpertJob(job.id);
     refresh();
   };
-
   const reject = async () => {
-    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/reject`);
+    await rejectExpertJob(job.id);
     refresh();
   };
-
   const autoReject = async () => {
     try {
-      await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/reject`);
+      await rejectExpertJob(job.id);
       refresh();
     } catch (e) {
       console.error(e);
     }
   };
-
-
   useEffect(() => {
     if (job.status === "ASSIGNED") {
       setDecisionTimeLeft(30);
@@ -70,8 +53,9 @@ export default function JobCard({ job, refresh }: JobCardProps) {
       decisionTimeLeft === null ||
       decisionExpired ||
       job.status !== "ASSIGNED"
-    ) return;
-
+    ) {
+      return;
+    }
     const timer = setInterval(() => {
       setDecisionTimeLeft((prev) => {
         if (prev === 1) {
@@ -87,54 +71,39 @@ export default function JobCard({ job, refresh }: JobCardProps) {
     return () => clearInterval(timer);
   }, [decisionTimeLeft, decisionExpired, job.status]);
 
-
   const startJob = async () => {
-    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/start`);
+    await startExpertJob(job.id);
     refresh();
   };
-
   const pauseJob = async () => {
-    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/pause`);
+    await pauseExpertJob(job.id);
     refresh();
   };
-
   const resumeJob = async () => {
-    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/resume`);
+    await resumeExpertJob(job.id);
     refresh();
   };
-
   const completeJob = async () => {
-    await axios.patch(`http://localhost:8080/expert/bookings/${job.id}/complete`);
+    await completeExpertJob(job.id);
     refresh();
   };
-
 
   useEffect(() => {
-
-    if (job.status !== "IN_PROGRESS" || !job.startTime) return;
-
+    if (job.status !== "IN_PROGRESS" || !job.startTime) {
+      return;
+    }
     const interval = setInterval(() => {
-
       const start = new Date(job.startTime!).getTime();
       const now = Date.now();
       const paused = (job.pausedSeconds ?? 0) * 1000;
-
       let elapsed = now - start - paused;
-
-      // freeze when paused
+      
       if (job.pauseTime) {
-        elapsed =
-          new Date(job.pauseTime).getTime() -
-          start -
-          paused;
+        elapsed = new Date(job.pauseTime).getTime() - start - paused;
       }
-
       setElapsedSeconds(Math.floor(elapsed / 1000));
-
     }, 1000);
-
     return () => clearInterval(interval);
-
   }, [job]);
 
   const formatTime = () => {
@@ -146,25 +115,20 @@ export default function JobCard({ job, refresh }: JobCardProps) {
 
   useEffect(() => {
     if (job.status === "COMPLETED") {
-      axios
-        .get<Review>(`http://localhost:8080/ratings/booking/${job.id}`)
+      getBookingRating(job.id)
         .then((res) => res.data && setReview(res.data))
         .catch(() => {});
     }
   }, [job.status, job.id]);
 
 
-
   return (
     <div className="job-card">
-
       <h3>Booking ID: {job.id}</h3>
       <p>Address: {job.address}</p>
       <p>Pincode: {job.pincode}</p>
       <p>Amount: ₹{job.amount}</p>
       <p>Status: {job.status}</p>
-
-      {/* ASSIGNED */}
       {job.status === "ASSIGNED" && (
         <div className="job-actions">
           {decisionTimeLeft !== null && (
@@ -172,38 +136,39 @@ export default function JobCard({ job, refresh }: JobCardProps) {
               Accept within: <b>{decisionTimeLeft}s</b>
             </p>
           )}
-          <button className="accept-btn" onClick={accept} disabled={decisionExpired}>
+          <button
+            className="accept-btn"
+            onClick={accept}
+            disabled={decisionExpired}
+          >
             Accept
           </button>
-          <button className="reject-btn" onClick={reject} disabled={decisionExpired}>
+          <button
+            className="reject-btn"
+            onClick={reject}
+            disabled={decisionExpired}
+          >
             Reject
           </button>
         </div>
       )}
-
-      {/* ACCEPTED */}
       {job.status === "ACCEPTED" && (
         <button className="otp-btn" onClick={() => setShowOtp(true)}>
           Verify OTP
         </button>
       )}
-
-      {/* IN PROGRESS */}
       {job.status === "IN_PROGRESS" && (
         <div className="progress-section">
-
           {!job.startTime && (
             <button className="start-btn" onClick={startJob}>
               ▶ Start Job
             </button>
           )}
-
           {job.startTime && (
             <>
               <p className="timer-text">
                 Timer: <b>{formatTime()}</b>
               </p>
-
               <div className="timer-actions">
                 {!job.pauseTime ? (
                   <button className="pause-btn" onClick={pauseJob}>
@@ -215,34 +180,31 @@ export default function JobCard({ job, refresh }: JobCardProps) {
                   </button>
                 )}
               </div>
-
               <button className="end-btn" onClick={completeJob}>
                 End Job
               </button>
             </>
           )}
-
         </div>
       )}
-
-
       {job.status === "COMPLETED" && (
         <div className="completed-wrapper">
           <div className="completed-badge">Job Completed</div>
         </div>
       )}
-
       {job.status === "COMPLETED" && (
         <div className="completed-bottom">
-
           <div className="payment-area">
             {job.paymentStatus !== "PAID" ? (
-              <Payment bookingId={job.id} amount={job.amount} refresh={refresh}/>
+              <Payment
+                bookingId={job.id}
+                amount={job.amount}
+                refresh={refresh}
+              />
             ) : (
               <div className="paid-label">Payment Collected</div>
             )}
           </div>
-
           {job.paymentStatus === "PAID" && (
             <div className="review-area">
               <button
@@ -251,7 +213,6 @@ export default function JobCard({ job, refresh }: JobCardProps) {
               >
                 {showReview ? "Hide Rating" : "View Rating"}
               </button>
-
               {showReview &&
                 (review ? (
                   <div className="review-card">
@@ -263,10 +224,8 @@ export default function JobCard({ job, refresh }: JobCardProps) {
                 ))}
             </div>
           )}
-
         </div>
       )}
-
       {showOtp && (
         <OtpModal
           bookingId={job.id}
@@ -274,7 +233,6 @@ export default function JobCard({ job, refresh }: JobCardProps) {
           refresh={refresh}
         />
       )}
-
     </div>
   );
 }

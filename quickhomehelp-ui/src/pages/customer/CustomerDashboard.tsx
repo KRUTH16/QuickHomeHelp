@@ -1,68 +1,61 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import "./CustomerDashboard.css";
-import BrowseServices from "./BrowserServices";
-import MyBookings from "./MyBookings";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
-
-interface Customer {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
+import { getCustomerProfile } from "../../api/customerApi";
+import type { Customer } from "../../types/authTypes";
+import "./CustomerDashboard.css";
 
 export default function CustomerDashboard() {
-  const [page, setPage] = useState("services");
-
   const [customer, setCustomer] = useState<Customer | null>(null);
-
   const userId = sessionStorage.getItem("userId");
-
-  const logout = () => {
-    sessionStorage.clear();
-    window.location.href = "/";
-  };
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchCustomer = async () => {
-      const res = await axios.get(`http://localhost:8080/customer/${userId}`);
+      if (!userId) {
+        return;
+      }
 
+      const res = await getCustomerProfile(userId);
       setCustomer(res.data);
     };
 
-    if (userId) fetchCustomer();
+    fetchCustomer();
   }, [userId]);
 
-  if (!customer) return <p>Loading...</p>;
+  if (!customer) {
+    return <p>Loading...</p>;
+  }
+
+  const logout = () => {
+    sessionStorage.clear();
+    navigate("/login");
+  };
 
   return (
     <div className="customer-dashboard">
       <div className="customer-topbar">
-        <div className="customer-info">👤 {customer.name}</div>
-
+        <div className="customer-info">{customer.name}</div>
         <h1 className="dashboard-title">Customer Dashboard</h1>
-
         <div className="topbar-right">
           <NotificationBell />
-
           <button className="logout-btn" onClick={logout}>
             Logout
           </button>
         </div>
       </div>
-
       <div className="customer-body">
         <div className="customer-sidebar">
-          <button onClick={() => setPage("services")}>Browse Services</button>
-
-          <button onClick={() => setPage("bookings")}>My Bookings</button>
+          <button onClick={() => navigate("/customer/services")}>
+            Browse Services
+          </button>
+          <button onClick={() => navigate("/customer/bookings")}>
+            My Bookings
+          </button>
         </div>
-
-        <div className="customer-content">
-          {page === "services" && <BrowseServices />}
-
-          {page === "bookings" && <MyBookings />}
+        <div className="customer-content" key={location.pathname}>
+          <Outlet />
         </div>
       </div>
     </div>

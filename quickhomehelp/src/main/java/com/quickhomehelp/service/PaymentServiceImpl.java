@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.quickhomehelp.entity.Booking;
 import com.quickhomehelp.entity.Payment;
+import com.quickhomehelp.exception.BadRequestException;
+import com.quickhomehelp.exception.ResourceNotFoundException;
 import com.quickhomehelp.repository.BookingRepository;
 import com.quickhomehelp.repository.PaymentRepository;
 
@@ -31,14 +33,14 @@ public class PaymentServiceImpl
     public Payment collectPayment(Long bookingId, String method) {
 
         Booking booking = bookingRepo.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
         if (!booking.getStatus().equals("COMPLETED")) {
-            throw new RuntimeException("Job not completed yet");
+            throw new BadRequestException("Job not completed yet");
         }
 
         if (booking.getPaymentStatus().equals("PAID")) {
-            throw new RuntimeException("Payment already done");
+            throw new BadRequestException("Payment already done");
         }
 
         Payment payment = new Payment();

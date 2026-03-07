@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import com.quickhomehelp.dto.RatingRequest;
 import com.quickhomehelp.entity.Booking;
 import com.quickhomehelp.entity.Rating;
+import com.quickhomehelp.exception.BadRequestException;
+import com.quickhomehelp.exception.DuplicateResourceException;
+import com.quickhomehelp.exception.ResourceNotFoundException;
 import com.quickhomehelp.repository.BookingRepository;
 import com.quickhomehelp.repository.RatingRepository;
 
@@ -31,12 +34,12 @@ public class RatingServiceImpl
         Booking booking =
             bookingRepo.findById(dto.getBookingId())
             .orElseThrow(() ->
-                new RuntimeException("Booking not found"));
+                new ResourceNotFoundException("Booking not found"));
 
         if (!booking.getPaymentStatus()
                 .equals("PAID")) {
 
-            throw new RuntimeException(
+            throw new BadRequestException(
                 "Cannot rate before payment");
         }
 
@@ -44,7 +47,7 @@ public class RatingServiceImpl
             .findByBookingId(dto.getBookingId())
             .isPresent()) {
 
-            throw new RuntimeException(
+            throw new DuplicateResourceException(
                 "Rating already submitted");
         }
 

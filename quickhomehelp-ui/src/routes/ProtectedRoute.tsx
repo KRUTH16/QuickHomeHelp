@@ -1,10 +1,10 @@
 import { Navigate } from "react-router-dom";
 import type { ReactNode } from "react";
 
-interface ProtectedRouteProps {
+type ProtectedRouteProps = {
   children: ReactNode;
   allowedRoles: string[];
-}
+};
 
 export default function ProtectedRoute({
   children,

@@ -1,9 +1,6 @@
-/* ======================================================
-   EXPERT FEATURES — SERVICE PROVIDER PANEL
-   Modern Card Layout
-====================================================== */
+/* EXPERT FEATURES */
 
-/* ===== MAIN CONTAINER ===== */
+/* MAIN CONTAINER */
 
 .expert-features-container {
   background: #ffffff;
@@ -17,7 +14,7 @@
 }
 
 
-/* ===== TITLE ===== */
+/* TITLE */
 
 .expert-features-container h3 {
   text-align: center;
@@ -28,9 +25,7 @@
 }
 
 
-/* ======================================================
-   ONLINE TOGGLE CARD
-====================================================== */
+/* ONLINE TOGGLE CARD */
 
 .online-toggle {
   background: linear-gradient(
@@ -73,9 +68,7 @@
 }
 
 
-/* ======================================================
-   TOGGLE BUTTONS
-====================================================== */
+/* TOGGLE BUTTONS */
 
 .toggle-btn {
   padding: 8px 16px;
@@ -132,9 +125,7 @@
 }
 
 
-/* ======================================================
-   ACTION BUTTON GRID
-====================================================== */
+/* ACTION BUTTON GRID */
 
 .expert-actions {
   display: grid;
@@ -181,9 +172,7 @@
 }
 
 
-/* ======================================================
-   RESPONSIVE
-====================================================== */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
 
@@ -199,3 +188,5 @@
   }
 
 }
+
+

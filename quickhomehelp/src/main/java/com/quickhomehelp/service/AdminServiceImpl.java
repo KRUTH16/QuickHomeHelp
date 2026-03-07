@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.quickhomehelp.entity.Booking;
 import com.quickhomehelp.entity.ExpertProfile;
 import com.quickhomehelp.entity.HomeService;
+import com.quickhomehelp.exception.BadRequestException;
+import com.quickhomehelp.exception.DuplicateResourceException;
+import com.quickhomehelp.exception.ResourceNotFoundException;
 import com.quickhomehelp.repository.BookingRepository;
 import com.quickhomehelp.repository.ExpertProfileRepository;
 import com.quickhomehelp.repository.ServiceRepository;
@@ -29,10 +32,10 @@ public class AdminServiceImpl implements AdminService {
     public String verifyExpert(Long expertProfileId) {
 
         ExpertProfile expert = expertRepo.findById(expertProfileId)
-                .orElseThrow(() -> new RuntimeException("Expert not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Expert not found"));
 
         if (!expert.isTrainingDone()) {
-            throw new RuntimeException("Expert has not completed training");
+            throw new BadRequestException("Expert has not completed training");
         }
 
         expert.setVerified(true);
@@ -49,7 +52,7 @@ public class AdminServiceImpl implements AdminService {
         ExpertProfile expert =
             expertRepo.findById(expertProfileId)
             .orElseThrow(() ->
-                new RuntimeException("Expert not found"));
+                new ResourceNotFoundException("Expert not found"));
 
         expert.setVerified(false);
         expert.setRejected(true);   
@@ -82,7 +85,7 @@ public class AdminServiceImpl implements AdminService {
                 );
 
         if (exists) {
-            throw new RuntimeException(
+            throw new DuplicateResourceException(
                     "Service already exists in this category"
             );
         }
@@ -109,7 +112,7 @@ public class AdminServiceImpl implements AdminService {
 
         HomeService service = serviceRepo.findById(id)
                 .orElseThrow(() ->
-                    new RuntimeException("Service not found"));
+                    new ResourceNotFoundException("Service not found"));
 
         service.setName(updatedService.getName());
         service.setCategory(updatedService.getCategory());
@@ -124,7 +127,7 @@ public class AdminServiceImpl implements AdminService {
     public String deleteService(Long id) {
 
         if (!serviceRepo.existsById(id)) {
-            throw new RuntimeException("Service not found");
+            throw new ResourceNotFoundException("Service not found");
         }
 
         serviceRepo.deleteById(id);
@@ -137,7 +140,7 @@ public class AdminServiceImpl implements AdminService {
     public String markTrainingDone(Long id) {
 
         ExpertProfile expert = expertRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expert not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Expert not found"));
 
         expert.setTrainingDone(true);
 

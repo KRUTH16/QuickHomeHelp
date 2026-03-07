@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.quickhomehelp.entity.*;
+import com.quickhomehelp.exception.BadRequestException;
+import com.quickhomehelp.exception.ResourceNotFoundException;
 import com.quickhomehelp.repository.*;
 
 import java.util.ArrayList;
@@ -32,13 +34,13 @@ public class MatchingServiceImpl
     public Booking assignExpert(Booking booking) {
 
         if (booking.getServiceId() == null) {
-            throw new RuntimeException("Service ID missing in booking");
+            throw new BadRequestException("Service ID missing in booking");
         }
 
         HomeService service = serviceRepo
                 .findById(booking.getServiceId())
                 .orElseThrow(() ->
-                    new RuntimeException("Service not found"));
+                    new ResourceNotFoundException("Service not found"));
 
         List<ExpertProfile> experts =
             expertRepo

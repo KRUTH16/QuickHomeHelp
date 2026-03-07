@@ -1,6 +1,4 @@
-/* =========================================
-   COMPLETED CONTAINER
-========================================= */
+/* COMPLETED CONTAINER */
 
 .completed-container {
   margin-top: 20px;
@@ -11,9 +9,7 @@
 }
 
 
-/* =========================================
-   COMPLETED BADGE
-========================================= */
+/* COMPLETED BADGE */
 
 .completed-badge {
   display: inline-block;
@@ -27,9 +23,7 @@
 }
 
 
-/* =========================================
-   BOTTOM FLEX ROW
-========================================= */
+/* BOTTOM FLEX ROW */
 
 .completed-bottom {
   display: flex;
@@ -39,18 +33,14 @@
 }
 
 
-/* =========================================
-   LEFT SIDE (PAYMENT)
-========================================= */
+/* LEFT SIDE (PAYMENT) */
 
 .payment-side {
   flex: 1;
 }
 
 
-/* =========================================
-   RIGHT SIDE (RATING)
-========================================= */
+/* RIGHT SIDE (RATING) */
 
 .rating-side {
   flex: 1;
@@ -59,9 +49,7 @@
 }
 
 
-/* =========================================
-   PAID LABEL
-========================================= */
+/* PAID LABEL */
 
 .paid-label {
   font-weight: 600;
@@ -91,9 +79,7 @@
   color: gray;
 }
 
-/* ============================= */
 /* PROGRESS SECTION CONTAINER */
-/* ============================= */
 
 .progress-section {
   margin-top: 18px;
@@ -107,9 +93,7 @@
   align-items: center;
 }
 
-/* ============================= */
 /* TIMER TEXT */
-/* ============================= */
 
 .timer-text {
   font-size: 16px;
@@ -123,9 +107,7 @@
   color: #ef4444;
 }
 
-/* ============================= */
 /* BUTTON BASE STYLE */
-/* ============================= */
 
 .progress-section button {
   padding: 9px 16px;
@@ -137,9 +119,7 @@
   transition: all 0.25s ease;
 }
 
-/* ============================= */
 /* START BUTTON */
-/* ============================= */
 
 .start-btn {
   background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -151,9 +131,7 @@
   box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4);
 }
 
-/* ============================= */
 /* PAUSE BUTTON */
-/* ============================= */
 
 .pause-btn {
   background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -165,9 +143,7 @@
   box-shadow: 0 6px 14px rgba(217, 119, 6, 0.4);
 }
 
-/* ============================= */
 /* RESUME BUTTON */
-/* ============================= */
 
 .resume-btn {
   background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -179,9 +155,7 @@
   box-shadow: 0 6px 14px rgba(22, 163, 74, 0.4);
 }
 
-/* ============================= */
 /* END JOB BUTTON */
-/* ============================= */
 
 .end-btn {
   background: linear-gradient(135deg, #ef4444, #dc2626);
@@ -193,18 +167,14 @@
   box-shadow: 0 6px 14px rgba(220, 38, 38, 0.4);
 }
 
-/* ============================= */
 /* TIMER ACTIONS WRAPPER */
-/* ============================= */
 
 .timer-actions {
   display: flex;
   gap: 12px;
 }
 
-/* ============================= */
 /* VERIFY OTP BUTTON */
-/* ============================= */
 
 .otp-btn {
   margin-top: 14px;
@@ -220,21 +190,19 @@
   transition: all 0.25s ease;
 }
 
-/* Hover Effect */
+/* VERIFY OTP BUTTON HOVER */
 .otp-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 18px rgba(99, 102, 241, 0.4);
 }
 
-/* Active Click Effect */
+/* VERIFY OTP BUTTON ACTIVE */
 .otp-btn:active {
   transform: translateY(0px);
   box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
 }
 
-/* ============================= */
 /* RESPONSIVE */
-/* ============================= */
 
 @media (max-width: 600px) {
   .progress-section {

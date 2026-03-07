@@ -1,61 +1,33 @@
-
-import { useState } from "react";
-import axios from "axios";
 import AssignedJobs from "./AssignedJobs";
 import "./ExpertFeatures.css";
+import { setExpertOnlineStatus } from "../../api/expertApi";
+import type { ExpertProfile } from "../../types/serviceTypes";
 
-interface ExpertProfile {
-  id: number;
-  online: boolean;
-}
-
-interface ExpertFeaturesProps {
+type ExpertFeaturesProps = {
   profile: ExpertProfile;
-  refresh: () => void;
-}
+  refresh: () => Promise<void>;
+};
 
 export default function ExpertFeatures({
   profile,
   refresh,
 }: ExpertFeaturesProps) {
-
-  const [page] =
-    useState("jobs");
-
-  const toggle = async (
-    status: boolean
-  ) => {
-
-    await axios.patch(
-      `http://localhost:8080/expert/profile/${profile.id}/online?status=${status}`
-    );
-
-    refresh();
+  
+  const toggle = async (status: boolean) => {
+    await setExpertOnlineStatus(profile.id, status);
+    await refresh();
   };
 
   return (
-
     <div className="expert-features-container">
-
       <h3>Service Provider Panel</h3>
-
       <div className="online-toggle">
-
         <p>
           Status:{" "}
-          <span
-            className={
-              profile.online
-                ? "status-online"
-                : "status-offline"
-            }
-          >
-            {profile.online
-              ? "Online"
-              : "Offline"}
+          <span className={profile.online ? "status-online" : "status-offline"}>
+            {profile.online ? "Online" : "Offline"}
           </span>
         </p>
-
         <button
           className="toggle-btn btn-online"
           onClick={() => toggle(true)}
@@ -63,7 +35,6 @@ export default function ExpertFeatures({
         >
           Go Online
         </button>
-
         <button
           className="toggle-btn btn-offline"
           onClick={() => toggle(false)}
@@ -71,32 +42,11 @@ export default function ExpertFeatures({
         >
           Go Offline
         </button>
-
       </div>
-
-
 
       <div className="expert-feature-content">
-
-        {page === "jobs" && (
-         <AssignedJobs/>
-        )}
-
-        {page === "accept" && (
-         <AssignedJobs/>
-        )}
-
-        {page === "status" && (
-           <AssignedJobs/>
-        )}
-
-        {page === "otp" && (
-           <AssignedJobs/>
-        )}
-
+        <AssignedJobs title="Jobs" syncStatusWithQuery />
       </div>
-
     </div>
   );
 }
-

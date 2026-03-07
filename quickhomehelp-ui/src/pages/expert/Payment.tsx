@@ -1,21 +1,14 @@
-
-
 import { useState } from "react";
-import axios from "axios";
 import "./Payment.css";
-
-interface PaymentProps {
-  bookingId: number;
-  amount: number;
-  refresh: () => void;
-}
+import { collectBookingPayment } from "../../api/expertApi";
+import type { PaymentProps } from "../../types/bookingTypes";
 
 export default function PaymentComponent({
   bookingId,
   amount,
   refresh,
 }: PaymentProps) {
-
+  
   const [method, setMethod] = useState<string>("");
   const [processing, setProcessing] = useState<boolean>(false);
   const [paid, setPaid] = useState<boolean>(false);
@@ -23,18 +16,7 @@ export default function PaymentComponent({
   const collectPayment = async (selectedMethod: string) => {
     try {
       setProcessing(true);
-
-      await axios.post(
-        "http://localhost:8080/payments/collect",
-        null,
-        {
-          params: {
-            bookingId,
-            method: selectedMethod,
-          },
-        }
-      );
-
+      await collectBookingPayment(bookingId, selectedMethod);
       setPaid(true);
       refresh();
     } catch (error) {
@@ -47,37 +29,21 @@ export default function PaymentComponent({
 
   return (
     <div className="payment-box">
-
       <h4>Payment</h4>
-
       <p className="payment-amount">
         Amount to Collect: <b>₹{amount}</b>
       </p>
-
       {!method && (
         <>
-          <button onClick={() => setMethod("CASH")}>
-            Cash
-          </button>
-
-          <button onClick={() => setMethod("UPI")}>
-            UPI
-          </button>
+          <button onClick={() => setMethod("CASH")}>Cash</button>
+          <button onClick={() => setMethod("UPI")}>UPI</button>
         </>
       )}
-
       {method === "UPI" && !paid && (
         <div className="qr-box">
-          <img
-            src="/dummy-qr.png"
-            alt="UPI QR"
-            width="150"
-          />
-
+          <img src="/dummy-qr.png" alt="UPI QR" width="150" />
           {processing ? (
-            <p className="processing-text">
-              Processing payment...
-            </p>
+            <p className="processing-text">Processing payment...</p>
           ) : (
             <button
               className="confirm-btn"
@@ -88,7 +54,6 @@ export default function PaymentComponent({
           )}
         </div>
       )}
-
       {method === "CASH" && !paid && (
         <button
           className="confirm-btn"
@@ -98,13 +63,7 @@ export default function PaymentComponent({
           Confirm Cash Payment
         </button>
       )}
-
-      {paid && (
-        <p className="success-text">
-          Payment Collected
-        </p>
-      )}
-
+      {paid && <p className="success-text">Payment Collected</p>}
     </div>
   );
 }
